@@ -1,43 +1,55 @@
+using Script.GlobalManagers;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-public class ChoiseBoard : MonoBehaviour
+namespace Script.UI
 {
-    [SerializeField] private GameObject _firstBoard;
-    [SerializeField] private GameObject _secondBoard;
-
-    private GameObject _currentBoard;
-
-    public void SelectFirstBoard()
+    public class ChoiseBoard : MonoBehaviour
     {
-        SpawnLocation(_firstBoard);
-    }
+        [SerializeField] private GameObject _firstBoard;
+        [SerializeField] private GameObject _secondBoard;
 
-    public void SelectSecondBoard()
-    {
-        SpawnLocation(_secondBoard);
-    }
-    
-    public void SelectBoardName(string name)
-    {
-        if (name == _firstBoard.name)
+        [SerializeField] private Button _selectBoardButton;
+
+        private GameObject _currentBoard;
+
+        private void Awake()
+        {
+            _selectBoardButton.onClick.AddListener(LoadBoard);
+        }
+
+        private void OnDestroy()
+        {
+            _selectBoardButton.onClick.RemoveListener(LoadBoard);
+        }
+
+        public void SelectFirstBoard()
         {
             SpawnLocation(_firstBoard);
         }
-        else if (name == _secondBoard.name)
+
+        public void SelectSecondBoard()
         {
             SpawnLocation(_secondBoard);
         }
-    }
 
-    private void SpawnLocation(GameObject board)
-    {
-        if(_currentBoard != null)
+        private void SpawnLocation(GameObject board)
         {
-            Destroy(_currentBoard);
+            if(_currentBoard != null)
+            {
+                Destroy(_currentBoard);
+            }
+            if(board != null)
+            {
+                _currentBoard = Instantiate(board, Vector3.zero, Quaternion.identity);
+            }
         }
-        if(board != null)
+    
+        private void LoadBoard()
         {
-            _currentBoard = Instantiate(board, Vector3.zero, Quaternion.identity);
+            BoardManager.ChosenBoard = _currentBoard;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
     }
 }

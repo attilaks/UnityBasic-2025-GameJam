@@ -828,6 +828,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _firstBoard: {fileID: 2978655233274620415, guid: 487af63ff3f79c044aad6933e8aeba42, type: 3}
   _secondBoard: {fileID: 4673229030777259622, guid: 76e168aba8b9b744cb9ca4dc9bdbf8a5, type: 3}
+  _selectBoardButton: {fileID: 1821022862}
 --- !u!1 &535186414
 GameObject:
   m_ObjectHideFlags: 0
@@ -873,6 +874,7 @@ GameObject:
   - component: {fileID: 754308661}
   - component: {fileID: 754308660}
   - component: {fileID: 754308659}
+  - component: {fileID: 754308663}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -969,6 +971,26 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &754308663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 754308658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 029bc776c751ff941901ae0a6e706871, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _minLoadTime: 1
+  _maxLoadTime: 5
+  _loadingAnimationCanvasGroup: {fileID: 1142752613}
+  _circleBar: {fileID: 1857165240}
+  _startButtonCanvasGroup: {fileID: 1821022863}
+  _buttonShowDuration: 0.8
+  _buttonShowEase: 27
+  _chooseBoardPanel: {fileID: 472930846}
 --- !u!1 &877529843
 GameObject:
   m_ObjectHideFlags: 0
@@ -1264,7 +1286,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1142752611}
   - component: {fileID: 1142752613}
-  - component: {fileID: 1142752612}
   m_Layer: 5
   m_Name: Loading (start)
   m_TagString: Untagged
@@ -1294,25 +1315,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1142752612
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1142752610}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 029bc776c751ff941901ae0a6e706871, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _minLoadTime: 1
-  _maxLoadTime: 5
-  _canvasGroup: {fileID: 1142752613}
-  _circleBar: {fileID: 1857165240}
-  _startButtonCanvasGroup: {fileID: 1821022863}
-  _buttonShowDuration: 0.8
-  _buttonShowEase: 27
 --- !u!225 &1142752613
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1323,7 +1325,7 @@ CanvasGroup:
   m_Enabled: 1
   m_Alpha: 1
   m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
 --- !u!1 &1286392285
 GameObject:
