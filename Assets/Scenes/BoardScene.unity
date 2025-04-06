@@ -168,10 +168,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _defaultBoard: {fileID: 7662970332155416366, guid: 76e168aba8b9b744cb9ca4dc9bdbf8a5, type: 3}
-  _player: {fileID: 3415234163875745883, guid: 2fa7d1789d2bd9e44b797fac72b2586b, type: 3}
-  _dragon: {fileID: 7926434704333286121, guid: eba88b14144f4f54f9034f567b4256d4, type: 3}
-  _treasureChest: {fileID: 6843247013297991873, guid: 07fb2abb547830d46b2653d1eed3ec55, type: 3}
-  _bomb: {fileID: 1058443389553742141, guid: 7a3b1ec085f17b247a4b6d0595eed177, type: 3}
 --- !u!1 &1285620306
 GameObject:
   m_ObjectHideFlags: 0
@@ -258,8 +254,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1285620306}
-  m_LocalRotation: {x: 0.6457407, y: -0.25627077, z: 0.036231186, w: 0.7183534}
-  m_LocalPosition: {x: 0, y: 5.3, z: 0}
+  m_LocalRotation: {x: 0.6782091, y: -0.15062514, z: 0.14969048, w: 0.7035178}
+  m_LocalPosition: {x: 1, y: 8.42, z: 0.52}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
