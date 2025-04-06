@@ -6,13 +6,9 @@ namespace Script.Controllers
 	public class BoardController : MonoBehaviour
 	{
 		[Header("Prefabs")]
-		[SerializeField] private GameObject _defaultBoard;
-		[SerializeField] private GameObject _player;
-		[SerializeField] private GameObject _dragon;
-		[SerializeField] private GameObject _treasureChest;
-		[SerializeField] private GameObject _bomb;
+		[SerializeField] private Board _defaultBoard;
 		
-		private GameObject _board;
+		private Board _board;
 
 		private void Awake()
 		{

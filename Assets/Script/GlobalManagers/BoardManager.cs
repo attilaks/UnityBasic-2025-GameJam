@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using Script.Controllers;
+using UnityEngine;
 
 namespace Script.GlobalManagers
 {
 	public static class BoardManager
 	{
-		public static GameObject ChosenBoard;
+		public static Board ChosenBoard;
 	}
 }

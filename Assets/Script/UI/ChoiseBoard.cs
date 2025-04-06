@@ -1,3 +1,4 @@
+using Script.Controllers;
 using Script.GlobalManagers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,12 +8,12 @@ namespace Script.UI
 {
     public class ChoiseBoard : MonoBehaviour
     {
-        [SerializeField] private GameObject _firstBoard;
-        [SerializeField] private GameObject _secondBoard;
+        [SerializeField] private Board _firstBoard;
+        [SerializeField] private Board _secondBoard;
 
         [SerializeField] private Button _selectBoardButton;
 
-        private GameObject _currentBoard;
+        private Board _currentBoard;
 
         private void Awake()
         {
@@ -34,7 +35,7 @@ namespace Script.UI
             SpawnLocation(_secondBoard);
         }
 
-        private void SpawnLocation(GameObject board)
+        private void SpawnLocation(Board board)
         {
             if(_currentBoard != null)
             {
