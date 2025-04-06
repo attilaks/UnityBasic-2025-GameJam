@@ -13,15 +13,16 @@ namespace Script.Controllers
         
         private Board _board;
         private ChessCell _currentCell;
-        
         private bool _isMoving;
-        private Vector3 _targetPosition;
+        
+        // нужно для наложения фигурки над клеткой, чтобы фигурка была видна
+        private readonly Vector3 _aboveCellPosition = new (0, 1, 0);
 
-        void Start()
+        private void Start()
         {
             // Находим систему координат доски
             _board = FindObjectOfType<Board>();
-            if (_board == null)
+            if (!_board)
             {
                 Debug.LogError("Board не найден на сцене!");
                 return;
@@ -34,8 +35,6 @@ namespace Script.Controllers
                 Debug.LogError("Компонент ChessCell не найден на игроке!");
                 return;
             }
-            
-            _targetPosition = transform.position;
         }
 
         private void Update()
@@ -43,10 +42,11 @@ namespace Script.Controllers
             // Плавное перемещение к целевой позиции
             if (_isMoving)
             {
-                transform.position = Vector3.MoveTowards(transform.position, _targetPosition, _smoothMoveSpeed * Time.deltaTime);
-                if (Vector3.Distance(transform.position, _targetPosition) < 0.001f)
+                transform.localPosition = Vector3.MoveTowards(transform.localPosition, _aboveCellPosition, 
+                    _smoothMoveSpeed * Time.deltaTime);
+                if (Vector3.Distance(transform.localPosition, _aboveCellPosition) < 0.001f)
                 {
-                    transform.position = _targetPosition;
+                    transform.localPosition = _aboveCellPosition;
                     _isMoving = false;
                 }
                 return;
@@ -91,7 +91,7 @@ namespace Script.Controllers
             
             // Получаем целевую клетку
             Transform targetCell = _board.GetCell(newRow, newCol);
-            if (targetCell == null)
+            if (!targetCell)
             {
                 Debug.LogError("Целевая клетка не найдена!");
                 return;
@@ -99,9 +99,9 @@ namespace Script.Controllers
             
             // Можно добавить дополнительные проверки (например, занята ли клетка)
             
-            // Обновляем позицию
+            // Обновляем позицию (задаем родительскую клетку для фигурки игрока)
             _currentCell = targetCell.GetComponent<ChessCell>();
-            _targetPosition = targetCell.position;
+            transform.parent = targetCell;
             _isMoving = true;
             
             Debug.Log($"Переместились на {_currentCell.ChessNotation}");
@@ -114,11 +114,11 @@ namespace Script.Controllers
                 _board = FindObjectOfType<Board>();
             
             Transform cell = _board.GetCell(row, col);
-            if (cell != null)
+            if (cell)
             {
                 _currentCell = cell.GetComponent<ChessCell>();
-                transform.localPosition = cell.localPosition + new Vector3(0, 1, 0);
-                _targetPosition = cell.position;
+                transform.localPosition = _aboveCellPosition;
+                transform.parent = cell;
                 _isMoving = false;
             }
         }
@@ -127,11 +127,11 @@ namespace Script.Controllers
         public void SetPosition(string chessNotation)
         {
             Transform cell = _board.GetCell(chessNotation);
-            if (cell != null)
+            if (cell)
             {
                 _currentCell = cell.GetComponent<ChessCell>();
-                transform.position = cell.position;
-                _targetPosition = cell.position;
+                transform.localPosition = _aboveCellPosition;
+                transform.parent = cell;
                 _isMoving = false;
             }
         }
