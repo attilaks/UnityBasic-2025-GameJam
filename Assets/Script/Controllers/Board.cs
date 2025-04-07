@@ -20,6 +20,7 @@ namespace Script.Controllers
 			_boardCells = new Transform[BoardSize, BoardSize];
 			InitializeBoard();
 			SpawnPlayer();
+			SpawnDragon();
 		}
     
 		private void InitializeBoard()
@@ -38,26 +39,26 @@ namespace Script.Controllers
 		
 		private void SpawnPlayer()
 		{
-			var spawnCell = GetCell(0, Random.Range(0, Board.BoardSize));
+			var spawnCell = GetCell(0, Random.Range(0, BoardSize));
 			if (!spawnCell)
 			{
 				Debug.LogError("Не удалось найти клетку для спавна игрока!");
 				return;
 			}
+			
+			Instantiate(_boardData.Player, spawnCell);
+		}
 
-			// Создаем игрока
-			var player = Instantiate(_boardData.Player, new Vector3(0, 1, 0), Quaternion.Euler(90, 0, 0), spawnCell);
-			var cellComponent = spawnCell.GetComponent<ChessCell>();
-			if (cellComponent)
+		private void SpawnDragon()
+		{
+			var spawnCell = GetCell(BoardSize - 1, Random.Range(0, BoardSize));
+			if (!spawnCell)
 			{
-				player.SetPosition(cellComponent.Row, cellComponent.Column);
+				Debug.LogError("Не удалось найти клетку для спавна дракона!");
+				return;
 			}
-			else
-			{
-				Debug.LogWarning("Клетка не имеет компонента ChessCell, позиция может быть неверной");
-			}
-
-			Debug.Log($"Игрок создан на позиции {spawnCell.GetComponent<ChessCell>()?.ChessNotation ?? "unknown"}");
+			
+			Instantiate(_boardData.Dragon, spawnCell);
 		}
 		
 		public Transform GetCell(int row, int col)
