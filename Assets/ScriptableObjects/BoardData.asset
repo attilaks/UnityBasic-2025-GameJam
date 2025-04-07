@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 595f14b843f04868858b23eda79de2c9, type: 3}
+  m_Name: BoardData
+  m_EditorClassIdentifier: 
+  _player: {fileID: 3415234163875745883, guid: 2fa7d1789d2bd9e44b797fac72b2586b, type: 3}
+  _dragon: {fileID: 7926434704333286121, guid: eba88b14144f4f54f9034f567b4256d4, type: 3}
+  _treasureChest: {fileID: 6843247013297991873, guid: 07fb2abb547830d46b2653d1eed3ec55, type: 3}
+  _bomb: {fileID: 1058443389553742141, guid: 7a3b1ec085f17b247a4b6d0595eed177, type: 3}

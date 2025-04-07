@@ -826,8 +826,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18efa0aecef831c409c4330fe8dcfa8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _firstBoard: {fileID: 2978655233274620415, guid: 487af63ff3f79c044aad6933e8aeba42, type: 3}
-  _secondBoard: {fileID: 4673229030777259622, guid: 76e168aba8b9b744cb9ca4dc9bdbf8a5, type: 3}
+  _firstBoard: {fileID: -3294747614526622551, guid: 487af63ff3f79c044aad6933e8aeba42, type: 3}
+  _secondBoard: {fileID: 7662970332155416366, guid: 76e168aba8b9b744cb9ca4dc9bdbf8a5, type: 3}
   _selectBoardButton: {fileID: 1821022862}
 --- !u!1 &535186414
 GameObject:
@@ -984,7 +984,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _minLoadTime: 1
-  _maxLoadTime: 5
+  _maxLoadTime: 1
   _loadingAnimationCanvasGroup: {fileID: 1142752613}
   _circleBar: {fileID: 1857165240}
   _startButtonCanvasGroup: {fileID: 1821022863}
