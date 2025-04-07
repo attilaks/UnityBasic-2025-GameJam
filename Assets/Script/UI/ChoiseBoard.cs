@@ -43,7 +43,7 @@ namespace Script.UI
             }
             if(board != null)
             {
-                _currentBoard = Instantiate(board, Vector3.zero, Quaternion.identity);
+                _currentBoard = Instantiate(board, new Vector3(5.5f, 0, 5f), Quaternion.identity);
             }
         }
     
