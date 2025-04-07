@@ -1,6 +1,9 @@
-﻿using ScriptableObjects;
+﻿using System;
+using Script.Enums;
+using ScriptableObjects;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 namespace Script.Controllers
 {
@@ -14,6 +17,10 @@ namespace Script.Controllers
 		private const int DragonStartRow = BoardSize - 1;
 
 		private Transform[,] _boardCells;
+		private PlayerController _player;
+		private DragonController _dragon;
+		
+		public event Action<Turn> NextTurnEvent = delegate { };
 
 		private void Awake()
 		{
@@ -21,10 +28,39 @@ namespace Script.Controllers
 			
 			_boardCells = new Transform[BoardSize, BoardSize];
 			InitializeBoard();
-			SpawnPlayer();
-			SpawnDragon();
+			
+			_player = SpawnPlayer();
+			_dragon = SpawnDragon();
+
+			_player.EndOfTurnEvent += PassMove;
+			_dragon.EndOfTurnEvent += PassMove;
+			
+			NextTurnEvent.Invoke(Turn.Player);
 		}
-    
+
+		private void OnDestroy()
+		{
+			if (SceneManager.GetActiveScene().buildIndex != 1) return;
+			
+			_player.EndOfTurnEvent -= PassMove;
+			_dragon.EndOfTurnEvent -= PassMove;
+		}
+
+		private void PassMove(Turn turnSide)
+		{
+			switch (turnSide)
+			{
+				case Turn.Player:
+					NextTurnEvent.Invoke(Turn.Dragon);
+					break;
+				case Turn.Dragon:
+					NextTurnEvent.Invoke(Turn.Player);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(turnSide), turnSide, null);
+			}
+		}
+
 		private void InitializeBoard()
 		{
 			for (int row = 0; row < _rows.Length; row++)
@@ -39,28 +75,26 @@ namespace Script.Controllers
 			}
 		}
 		
-		private void SpawnPlayer()
+		private PlayerController SpawnPlayer()
 		{
 			var spawnCell = GetCell(PlayerStartRow, Random.Range(0, BoardSize));
-			if (!spawnCell)
-			{
-				Debug.LogError("Не удалось найти клетку для спавна игрока!");
-				return;
-			}
+			if (spawnCell) 
+				return Instantiate(_boardData.Player, spawnCell);
 			
-			Instantiate(_boardData.Player, spawnCell);
+			Debug.LogError("Не удалось найти клетку для спавна игрока!");
+			return null;
+
 		}
 
-		private void SpawnDragon()
+		private DragonController SpawnDragon()
 		{
 			var spawnCell = GetCell(DragonStartRow, Random.Range(0, BoardSize));
-			if (!spawnCell)
-			{
-				Debug.LogError("Не удалось найти клетку для спавна дракона!");
-				return;
-			}
+			if (spawnCell) 
+				return Instantiate(_boardData.Dragon, spawnCell);
 			
-			Instantiate(_boardData.Dragon, spawnCell);
+			Debug.LogError("Не удалось найти клетку для спавна дракона!");
+			return null;
+
 		}
 		
 		public Transform GetCell(int row, int col)

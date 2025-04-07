@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using Script.Enums;
+using UnityEngine;
 
 namespace Script.Controllers
 {
@@ -10,6 +12,8 @@ namespace Script.Controllers
         [SerializeField] private KeyCode _leftKey = KeyCode.LeftArrow;
         [SerializeField] private KeyCode _rightKey = KeyCode.RightArrow;
 
+        protected override Turn _turn => Turn.Player;
+
         private void Update()
         {
             if (_isMoving)
@@ -18,7 +22,8 @@ namespace Script.Controllers
                 return;
             }
             
-            HandleInput();
+            if (_isMyTurn)
+                HandleInput();
         }
         
         private void HandleInput()

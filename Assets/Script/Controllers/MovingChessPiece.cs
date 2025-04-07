@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using Script.Enums;
+using UnityEngine;
 // ReSharper disable InconsistentNaming
 
 namespace Script.Controllers
@@ -8,12 +10,28 @@ namespace Script.Controllers
 		[Header("Настройки")]
 		[SerializeField] protected float _smoothMoveSpeed = 5f;
 		
+		public event Action<Turn> EndOfTurnEvent = delegate { };
+		
 		protected bool _isMoving;
+		protected bool _isMyTurn;
+		protected virtual Turn _turn => Turn.Dragon;
 		
 		protected override void Awake()
 		{
 			base.Awake();
 			_isMoving = false;
+
+			_board.NextTurnEvent += OnNextTurn;
+		}
+
+		private void OnDestroy()
+		{
+			_board.NextTurnEvent -= OnNextTurn;
+		}
+
+		private void OnNextTurn(Turn nextTurnSide)
+		{
+			_isMyTurn = nextTurnSide == _turn;
 		}
 
 		protected void MoveToCurrentCell()
@@ -24,6 +42,7 @@ namespace Script.Controllers
 			{
 				transform.localPosition = _aboveCellPosition;
 				_isMoving = false;
+				EndOfTurnEvent.Invoke(_turn);
 			}
 		}
 	}
