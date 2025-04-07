@@ -7,7 +7,6 @@ namespace Script.Controllers
 		private void Update()
 		{
 			if (!_isMoving) return;
-            
 			MoveToCurrentCell();
 		}
 	}
