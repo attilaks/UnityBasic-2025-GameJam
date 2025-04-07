@@ -10,6 +10,7 @@ namespace Script.Controllers
         
 		// нужно для наложения фигурки над клеткой, чтобы фигурка была видна
 		protected readonly Vector3 _aboveCellPosition = new (0, 1, 0);
+		private readonly Quaternion _aboveCellRotation = Quaternion.Euler(90, 0, 0);
 		
 		protected virtual void Awake()
 		{
@@ -28,7 +29,7 @@ namespace Script.Controllers
 			}
             
 			transform.localPosition = _aboveCellPosition;
-			transform.rotation = Quaternion.Euler(90, 0, 0);
+			transform.rotation = _aboveCellRotation;
 		}
 	}
 }

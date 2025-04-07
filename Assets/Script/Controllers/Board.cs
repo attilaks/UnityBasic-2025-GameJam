@@ -4,15 +4,17 @@ using UnityEngine.SceneManagement;
 
 namespace Script.Controllers
 {
-	public class Board : MonoBehaviour
+	public sealed class Board : MonoBehaviour
 	{
 		[SerializeField] private BoardData _boardData;
 		[SerializeField] private Transform[] _rows;
 
 		public const int BoardSize = 8;
+		private const int PlayerStartRow = 0;
+		private const int DragonStartRow = BoardSize - 1;
 
 		private Transform[,] _boardCells;
-		
+
 		private void Awake()
 		{
 			if (SceneManager.GetActiveScene().buildIndex != 1) return;
@@ -39,7 +41,7 @@ namespace Script.Controllers
 		
 		private void SpawnPlayer()
 		{
-			var spawnCell = GetCell(0, Random.Range(0, BoardSize));
+			var spawnCell = GetCell(PlayerStartRow, Random.Range(0, BoardSize));
 			if (!spawnCell)
 			{
 				Debug.LogError("Не удалось найти клетку для спавна игрока!");
@@ -51,7 +53,7 @@ namespace Script.Controllers
 
 		private void SpawnDragon()
 		{
-			var spawnCell = GetCell(BoardSize - 1, Random.Range(0, BoardSize));
+			var spawnCell = GetCell(DragonStartRow, Random.Range(0, BoardSize));
 			if (!spawnCell)
 			{
 				Debug.LogError("Не удалось найти клетку для спавна дракона!");
@@ -67,20 +69,6 @@ namespace Script.Controllers
 				return null;
         
 			return _boardCells[row, col];
-		}
-		
-		public Transform GetCell(string chessNotation)
-		{
-			if (chessNotation.Length != 2) return null;
-			chessNotation = chessNotation.ToLower();
-        
-			char letterChar = chessNotation[0];
-			char numberChar = chessNotation[1];
-        
-			int col = letterChar - 'a';
-			int row = numberChar - '0';
-        
-			return GetCell(row, col);
 		}
 	}
 }
