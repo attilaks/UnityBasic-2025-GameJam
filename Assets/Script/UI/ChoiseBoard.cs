@@ -39,7 +39,7 @@ namespace Script.UI
         {
             if(_currentBoard != null)
             {
-                Destroy(_currentBoard);
+                Destroy(_currentBoard.gameObject);
             }
             if(board != null)
             {
