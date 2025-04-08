@@ -1,27 +1,66 @@
-﻿using ScriptableObjects;
+﻿using System;
+using Script.Enums;
+using ScriptableObjects;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 namespace Script.Controllers
 {
-	public class Board : MonoBehaviour
+	public sealed class Board : MonoBehaviour
 	{
 		[SerializeField] private BoardData _boardData;
 		[SerializeField] private Transform[] _rows;
 
 		public const int BoardSize = 8;
+		private const int PlayerStartRow = 0;
+		private const int DragonStartRow = BoardSize - 1;
 
 		private Transform[,] _boardCells;
+		private PlayerController _player;
+		private DragonController _dragon;
 		
+		public event Action<Turn> NextTurnEvent = delegate { };
+
 		private void Awake()
 		{
 			if (SceneManager.GetActiveScene().buildIndex != 1) return;
 			
 			_boardCells = new Transform[BoardSize, BoardSize];
 			InitializeBoard();
-			SpawnPlayer();
+			
+			_player = SpawnPlayer();
+			_dragon = SpawnDragon();
+
+			_player.EndOfTurnEvent += PassMove;
+			_dragon.EndOfTurnEvent += PassMove;
+			
+			NextTurnEvent.Invoke(Turn.Player);
 		}
-    
+
+		private void OnDestroy()
+		{
+			if (SceneManager.GetActiveScene().buildIndex != 1) return;
+			
+			_player.EndOfTurnEvent -= PassMove;
+			_dragon.EndOfTurnEvent -= PassMove;
+		}
+
+		private void PassMove(Turn turnSide)
+		{
+			switch (turnSide)
+			{
+				case Turn.Player:
+					NextTurnEvent.Invoke(Turn.Dragon);
+					break;
+				case Turn.Dragon:
+					NextTurnEvent.Invoke(Turn.Player);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(turnSide), turnSide, null);
+			}
+		}
+
 		private void InitializeBoard()
 		{
 			for (int row = 0; row < _rows.Length; row++)
@@ -36,28 +75,26 @@ namespace Script.Controllers
 			}
 		}
 		
-		private void SpawnPlayer()
+		private PlayerController SpawnPlayer()
 		{
-			var spawnCell = GetCell(0, Random.Range(0, Board.BoardSize));
-			if (!spawnCell)
-			{
-				Debug.LogError("Не удалось найти клетку для спавна игрока!");
-				return;
-			}
+			var spawnCell = GetCell(PlayerStartRow, Random.Range(0, BoardSize));
+			if (spawnCell) 
+				return Instantiate(_boardData.Player, spawnCell);
+			
+			Debug.LogError("Не удалось найти клетку для спавна игрока!");
+			return null;
 
-			// Создаем игрока
-			var player = Instantiate(_boardData.Player, new Vector3(0, 1, 0), Quaternion.Euler(90, 0, 0), spawnCell);
-			var cellComponent = spawnCell.GetComponent<ChessCell>();
-			if (cellComponent)
-			{
-				player.SetPosition(cellComponent.Row, cellComponent.Column);
-			}
-			else
-			{
-				Debug.LogWarning("Клетка не имеет компонента ChessCell, позиция может быть неверной");
-			}
+		}
 
-			Debug.Log($"Игрок создан на позиции {spawnCell.GetComponent<ChessCell>()?.ChessNotation ?? "unknown"}");
+		private DragonController SpawnDragon()
+		{
+			var spawnCell = GetCell(DragonStartRow, Random.Range(0, BoardSize));
+			if (spawnCell) 
+				return Instantiate(_boardData.Dragon, spawnCell);
+			
+			Debug.LogError("Не удалось найти клетку для спавна дракона!");
+			return null;
+
 		}
 		
 		public Transform GetCell(int row, int col)
@@ -66,20 +103,6 @@ namespace Script.Controllers
 				return null;
         
 			return _boardCells[row, col];
-		}
-		
-		public Transform GetCell(string chessNotation)
-		{
-			if (chessNotation.Length != 2) return null;
-			chessNotation = chessNotation.ToLower();
-        
-			char letterChar = chessNotation[0];
-			char numberChar = chessNotation[1];
-        
-			int col = letterChar - 'a';
-			int row = numberChar - '0';
-        
-			return GetCell(row, col);
 		}
 	}
 }
