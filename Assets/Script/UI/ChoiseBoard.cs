@@ -14,6 +14,7 @@ namespace Script.UI
         [SerializeField] private Button _selectBoardButton;
 
         private Board _currentBoard;
+        private SpawnerBomb _spawner;
 
         private void Awake()
         {
