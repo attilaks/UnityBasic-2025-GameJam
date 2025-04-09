@@ -41,9 +41,12 @@ namespace Script.Controllers
 		private void OnDestroy()
 		{
 			if (SceneManager.GetActiveScene().buildIndex != 1) return;
-			
-			_player.EndOfTurnEvent -= PassMove;
-			_dragon.EndOfTurnEvent -= PassMove;
+
+			if (_player)
+			{
+				_player.EndOfTurnEvent -= PassMove;
+				_dragon.EndOfTurnEvent -= PassMove;
+			}
 		}
 
 		private void PassMove(Turn turnSide)

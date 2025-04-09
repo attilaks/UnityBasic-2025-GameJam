@@ -51,6 +51,7 @@ namespace Script.UI
         private void LoadBoard()
         {
             BoardManager.ChosenBoard = _currentBoard;
+            DontDestroyOnLoad(BoardManager.ChosenBoard);
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
     }

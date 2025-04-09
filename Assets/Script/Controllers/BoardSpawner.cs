@@ -1,5 +1,6 @@
 ﻿using Script.GlobalManagers;
 using UnityEngine;
+using Vector3 = UnityEngine.Vector3;
 
 namespace Script.Controllers
 {
@@ -10,7 +11,16 @@ namespace Script.Controllers
 
 		private void Awake()
 		{
-			Instantiate(BoardManager.ChosenBoard ? BoardManager.ChosenBoard : _defaultBoard, transform);
+			if (BoardManager.ChosenBoard)
+			{
+				Instantiate(BoardManager.ChosenBoard, new Vector3(0,0,0), Quaternion.identity, transform);
+				Destroy(BoardManager.ChosenBoard.gameObject);
+			}
+			else
+			{
+				Instantiate(_defaultBoard, transform);
+			}
+			// Instantiate(BoardManager.ChosenBoard ? BoardManager.ChosenBoard : _defaultBoard, new Vector3(0,0,0), Quaternion.identity, transform);
 		}
 	}
 }
