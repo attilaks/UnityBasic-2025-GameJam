@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Script.Enums;
 using ScriptableObjects;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
@@ -69,6 +70,12 @@ namespace Script.Controllers
 				return;
 			}
 			
+			if (_player.CurrentCell.Equals(_treasureChest.CurrentCell))
+			{
+				PlayerWon();
+				return;
+			}
+			
 			switch (turnSide)
 			{
 				case Turn.Player:
@@ -80,6 +87,11 @@ namespace Script.Controllers
 				default:
 					throw new ArgumentOutOfRangeException(nameof(turnSide), turnSide, null);
 			}
+		}
+
+		private void PlayerWon()
+		{
+			OnEndOfGame.Invoke(true);
 		}
 
 		private void PlayerIsDefeated()
