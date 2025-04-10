@@ -1,4 +1,5 @@
-﻿using Script.GlobalManagers;
+﻿using System;
+using Script.GlobalManagers;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 
@@ -8,18 +9,34 @@ namespace Script.Controllers
 	{
 		[Header("Prefabs")]
 		[SerializeField] private Board _defaultBoard;
+		
+		public event Action<bool> OnEndOfGame = delegate { };
+		
+		private Board _currentBoard;
 
 		private void Awake()
 		{
 			if (BoardManager.ChosenBoard)
 			{
-				Instantiate(BoardManager.ChosenBoard, new Vector3(0,0,0), Quaternion.identity, transform);
+				_currentBoard = Instantiate(BoardManager.ChosenBoard, new Vector3(0,0,0), Quaternion.identity, transform);
 				Destroy(BoardManager.ChosenBoard.gameObject);
 			}
 			else
 			{
-				Instantiate(_defaultBoard, transform);
+				_currentBoard = Instantiate(_defaultBoard, transform);
 			}
+
+			_currentBoard.OnEndOfGame += OnEndOfGameHandler;
+		}
+
+		private void OnDestroy()
+		{
+			_currentBoard.OnEndOfGame -= OnEndOfGameHandler;
+		}
+
+		private void OnEndOfGameHandler(bool playerWon)
+		{
+			OnEndOfGame.Invoke(playerWon);
 		}
 	}
 }

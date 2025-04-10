@@ -69,10 +69,5 @@ namespace Script.Controllers
             
             SetCurrentCell(targetCell.GetComponent<ChessCell>());
         }
-
-        public (int row, int col) GetCurrentPosition()
-        {
-            return (CurrentCell.Row, CurrentCell.Column);
-        }
 	}
 }

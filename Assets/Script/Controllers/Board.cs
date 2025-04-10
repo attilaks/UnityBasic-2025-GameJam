@@ -12,6 +12,8 @@ namespace Script.Controllers
 	{
 		[SerializeField] private BoardData _boardData;
 		[SerializeField] private Transform[] _rows;
+		
+		public event Action<bool> OnEndOfGame = delegate { };
 
 		public const int BoardSize = 8;
 		private const byte MaxNeighboursToCell = 4;
@@ -61,12 +63,10 @@ namespace Script.Controllers
 
 		private void HandleEndOfTurn(Turn turnSide)
 		{
-			if (turnSide == Turn.Dragon)
+			if (_dragon.CurrentCell.Equals(_player.CurrentCell))
 			{
-				if (_dragon.CurrentCell.Equals(_player.CurrentCell))
-				{
-					
-				}
+				PlayerIsDefeated();
+				return;
 			}
 			
 			switch (turnSide)
@@ -80,6 +80,11 @@ namespace Script.Controllers
 				default:
 					throw new ArgumentOutOfRangeException(nameof(turnSide), turnSide, null);
 			}
+		}
+
+		private void PlayerIsDefeated()
+		{
+			OnEndOfGame.Invoke(false);
 		}
 
 		private void InitializeBoard()

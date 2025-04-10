@@ -22,16 +22,24 @@ namespace Script.Controllers
 			_isMoving = false;
 
 			_board.NextTurnEvent += OnNextTurn;
+			_board.OnEndOfGame += OnEndOfGame;
 		}
 
 		private void OnDestroy()
 		{
 			_board.NextTurnEvent -= OnNextTurn;
+			_board.OnEndOfGame -= OnEndOfGame;
 		}
 
 		private void OnNextTurn(Turn nextTurnSide)
 		{
 			_isMyTurn = nextTurnSide == _turn;
+		}
+		
+		private void OnEndOfGame(bool playerWon)
+		{
+			_isMoving = false;
+			_isMyTurn = false;
 		}
 
 		protected void SetCurrentCell(ChessCell newCell)
