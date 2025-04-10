@@ -6,7 +6,7 @@ namespace Script.Controllers
 	public class ChessPiece : MonoBehaviour
 	{
 		protected Board _board;
-		protected ChessCell _currentCell;
+		public ChessCell CurrentCell {get; protected set;}
         
 		// нужно для наложения фигурки над клеткой, чтобы фигурка была видна
 		protected readonly Vector3 _aboveCellPosition = new (0, 1, 0);
@@ -21,8 +21,8 @@ namespace Script.Controllers
 				return;
 			}
             
-			_currentCell = transform.parent.GetComponent<ChessCell>();
-			if (!_currentCell)
+			CurrentCell = transform.parent.GetComponent<ChessCell>();
+			if (!CurrentCell)
 			{
 				Debug.LogError("Компонент ChessCell не найден на игроке!");
 				return;

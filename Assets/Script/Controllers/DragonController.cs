@@ -1,4 +1,5 @@
-﻿using Script.Enums;
+﻿using System.Collections.Generic;
+using Script.Enums;
 using UnityEngine;
 
 namespace Script.Controllers
@@ -17,15 +18,43 @@ namespace Script.Controllers
 
 			if (_isMyTurn)
 			{
-				CalculateNextMove();
-				MoveToCurrentCell();
+				var newCell = CalculateNextMove();
+				SetCurrentCell(newCell);
 			}
 		}
 
-		private void CalculateNextMove()
+		private ChessCell CalculateNextMove()
 		{
-			//todo
-			Debug.Log("Ход дракона");
+			var playerCell = _board.GetPlayerCell();
+			if (playerCell.Equals(CurrentCell))
+				return CurrentCell;
+			
+			var reachableCells = _board.GetAdjacentCells(CurrentCell);
+			return ChooseCell(reachableCells, playerCell);
+		}
+
+		private static ChessCell ChooseCell(List<ChessCell> reachableNodes, ChessCell playerCell)
+		{
+			var minCost = int.MaxValue;
+			ChessCell bestCell = null;
+
+			for (var i = 0; i < reachableNodes.Count; i++)
+			{
+				var cell = reachableNodes[i];
+				var costToGoalCell = EstimateDistance(cell, playerCell);
+
+				if (costToGoalCell >= minCost) continue;
+				
+				minCost = costToGoalCell;
+				bestCell = cell;
+			}
+
+			return bestCell;
+		}
+
+		private static int EstimateDistance(ChessCell cell, ChessCell playerCell)
+		{
+			return Mathf.Abs(cell.Row - playerCell.Row) + Mathf.Abs(cell.Column - playerCell.Column);
 		}
 	}
 }

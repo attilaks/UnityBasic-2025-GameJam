@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Script.Enums;
 using ScriptableObjects;
 using UnityEngine;
@@ -19,6 +20,8 @@ namespace Script.Controllers
 		private Transform[,] _boardCells;
 		private PlayerController _player;
 		private DragonController _dragon;
+
+		private const byte MaxNeighboursToCell = 4;
 		
 		public event Action<Turn> NextTurnEvent = delegate { };
 
@@ -42,7 +45,7 @@ namespace Script.Controllers
 		{
 			if (SceneManager.GetActiveScene().buildIndex != 1) return;
 
-			if (_player)
+			if (_player && _dragon)
 			{
 				_player.EndOfTurnEvent -= PassMove;
 				_dragon.EndOfTurnEvent -= PassMove;
@@ -66,13 +69,13 @@ namespace Script.Controllers
 
 		private void InitializeBoard()
 		{
-			for (int row = 0; row < _rows.Length; row++)
+			for (byte row = 0; row < _rows.Length; row++)
 			{
-				for (int col = 0; col < _rows[row].childCount; col++)
+				for (byte col = 0; col < _rows[row].childCount; col++)
 				{
 					_boardCells[row, col] = _rows[row].GetChild(col);
 					
-					ChessCell cellComponent = _boardCells[row, col].gameObject.AddComponent<ChessCell>();
+					var cellComponent = _boardCells[row, col].gameObject.AddComponent<ChessCell>();
 					cellComponent.SetCoordinates(row, col);
 				}
 			}
@@ -106,6 +109,27 @@ namespace Script.Controllers
 				return null;
         
 			return _boardCells[row, col];
+		}
+
+		public ChessCell GetPlayerCell() => _player.CurrentCell;
+
+		public List<ChessCell> GetAdjacentCells(ChessCell cell)
+		{
+			var adjacentCells = new List<ChessCell>(MaxNeighboursToCell);
+			
+			var leftCell = GetCell(cell.Row, cell.Column - 1);
+			if (leftCell) adjacentCells.Add(leftCell.GetComponent<ChessCell>());
+			
+			var rightCell = GetCell(cell.Row, cell.Column + 1);
+			if (rightCell) adjacentCells.Add(rightCell.GetComponent<ChessCell>());
+			
+			var upperCell = GetCell(cell.Row + 1, cell.Column);
+			if (upperCell) adjacentCells.Add(upperCell.GetComponent<ChessCell>());
+			
+			var lowerCell = GetCell(cell.Row - 1, cell.Column);
+			if (lowerCell) adjacentCells.Add(lowerCell.GetComponent<ChessCell>());
+			
+			return adjacentCells;
 		}
 	}
 }

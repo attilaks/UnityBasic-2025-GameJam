@@ -34,6 +34,13 @@ namespace Script.Controllers
 			_isMyTurn = nextTurnSide == _turn;
 		}
 
+		protected void SetCurrentCell(ChessCell newCell)
+		{
+			CurrentCell = newCell;
+			transform.parent = newCell.transform;
+			_isMoving = true;
+		}
+
 		protected void MoveToCurrentCell()
 		{
 			transform.localPosition = Vector3.MoveTowards(transform.localPosition, _aboveCellPosition, 

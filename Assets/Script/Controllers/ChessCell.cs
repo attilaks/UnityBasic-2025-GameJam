@@ -1,22 +1,39 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Script.Controllers
 {
-	public class ChessCell : MonoBehaviour
+	public class ChessCell : MonoBehaviour, IEquatable<ChessCell>
 	{
-		public int Row { get; private set; }
-		public int Column { get; private set; }
-		public string ChessNotation =>  $"{(char)('a' + Column)}{8 - Row}";
+		public byte Row { get; private set; }
+		public byte Column { get; private set; }
+		
+		private string ChessNotation =>  $"{(char)('a' + Column)}{8 - Row}";
+		private bool _isInitialized;
     
-		public void SetCoordinates(int row, int col)
+		public void SetCoordinates(byte row, byte col)
 		{
+			if (_isInitialized)
+			{
+				Debug.LogWarning("Координаты уже заданы!");
+				return;
+			}
+			
 			Row = row;
 			Column = col;
+			_isInitialized = true;
 		}
 		
 		private void OnMouseEnter()
 		{
 			Debug.Log($"Клетка {ChessNotation} (ряд {Row}, колонка {Column})");
+		}
+
+		public bool Equals(ChessCell other)
+		{
+			if (other is null) return false;
+			if (ReferenceEquals(this, other)) return true;
+			return Row == other.Row && Column == other.Column;
 		}
 	}
 }

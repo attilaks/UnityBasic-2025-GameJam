@@ -7,7 +7,6 @@ namespace Script.UI
     {
         [SerializeField] private GameObject _cluePanel;
         
-
         public void OnPointerEnter(PointerEventData eventData)
         {
             _cluePanel.SetActive(true);
