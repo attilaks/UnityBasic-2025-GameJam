@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2330749886835265146}
   - component: {fileID: 4821879940769011134}
-  - component: {fileID: -5229355614436625929}
+  - component: {fileID: 2901641673102169733}
   m_Layer: 0
   m_Name: treasure
   m_TagString: Untagged
@@ -85,7 +85,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &-5229355614436625929
+--- !u!114 &2901641673102169733
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

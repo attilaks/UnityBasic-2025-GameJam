@@ -38,11 +38,11 @@ namespace Script.UI
 
         private void SpawnLocation(Board board)
         {
-            if(_currentBoard != null)
+            if(_currentBoard)
             {
                 Destroy(_currentBoard.gameObject);
             }
-            if(board != null)
+            if(board)
             {
                 _currentBoard = Instantiate(board, new Vector3(5.5f, 0, 5f), Quaternion.identity);
             }
@@ -50,6 +50,8 @@ namespace Script.UI
     
         private void LoadBoard()
         {
+            if (!_currentBoard) return;
+            
             BoardManager.ChosenBoard = _currentBoard;
             DontDestroyOnLoad(BoardManager.ChosenBoard);
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
