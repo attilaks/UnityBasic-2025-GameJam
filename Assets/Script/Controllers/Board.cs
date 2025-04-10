@@ -16,10 +16,14 @@ namespace Script.Controllers
 		public const int BoardSize = 8;
 		private const int PlayerStartRow = 0;
 		private const int DragonStartRow = BoardSize - 1;
+		//private const int TreasureStartRow = 4;
+		//private const int BombsRow = 2;
 
 		private Transform[,] _boardCells;
 		private PlayerController _player;
 		private DragonController _dragon;
+		//private ChessPiece _treasureChest;
+		//private ChessPiece _spawner;
 
 		private const byte MaxNeighboursToCell = 4;
 		
@@ -34,6 +38,8 @@ namespace Script.Controllers
 			
 			_player = SpawnPlayer();
 			_dragon = SpawnDragon();
+			//_treasureChest = SpawnerTreasure();
+			//_spawner = SpawnerBombs();
 
 			_player.EndOfTurnEvent += PassMove;
 			_dragon.EndOfTurnEvent += PassMove;
@@ -102,7 +108,28 @@ namespace Script.Controllers
 			return null;
 
 		}
-		
+
+		// private ChessPiece SpawnerBombs()
+		// {
+		// 	var spawnCell = GetCell(BombsRow, Random.Range(0, BoardSize));
+		// 	if (spawnCell) 
+		// 		return Instantiate(_boardData.Bomb, spawnCell);
+		// 	
+		// 	Debug.LogError("Не удалось найти клетку для спавна бомбы!");
+		// 	return null;
+		// }
+
+		// private ChessPiece SpawnerTreasure()
+		// {
+		// 	var spawnCell = GetCell(TreasureStartRow, Random.Range(0, BoardSize));
+		// 	if (spawnCell)
+		// 		return Instantiate(_boardData.TreasureChest, spawnCell);
+		// 	
+		// 	Debug.LogError("Не удалось найти клетку для спавна сокровища!");
+		// 	return null;
+		// 	
+		// }
+
 		public Transform GetCell(int row, int col)
 		{
 			if (row < 0 || row >= BoardSize || col < 0 || col >= BoardSize)
