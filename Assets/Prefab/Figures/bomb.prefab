@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1932977645765676392}
   - component: {fileID: 3938073791367987338}
+  - component: {fileID: 1880339735715781743}
   m_Layer: 0
   m_Name: bomb
   m_TagString: Untagged
@@ -84,3 +85,15 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1880339735715781743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1058443389553742141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73facd44a9624205b5c7898bfe45dcdd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

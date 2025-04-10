@@ -48,8 +48,8 @@ namespace Script.Controllers
         
         private void TryMove(int rowDelta, int colDelta)
         {
-            int newRow = _currentCell.Row + rowDelta;
-            int newCol = _currentCell.Column + colDelta;
+            int newRow = CurrentCell.Row + rowDelta;
+            int newCol = CurrentCell.Column + colDelta;
             
             if (newRow < 0 || newRow >= Board.BoardSize || 
                 newCol < 0 || newCol >= Board.BoardSize)
@@ -67,9 +67,12 @@ namespace Script.Controllers
             
             // Можно добавить дополнительные проверки (например, занята ли клетка)
             
-            _currentCell = targetCell.GetComponent<ChessCell>();
-            transform.parent = targetCell;
-            _isMoving = true;
+            SetCurrentCell(targetCell.GetComponent<ChessCell>());
+        }
+
+        public (int row, int col) GetCurrentPosition()
+        {
+            return (CurrentCell.Row, CurrentCell.Column);
         }
 	}
 }

@@ -17,15 +17,34 @@ namespace Script.Controllers
 
 			if (_isMyTurn)
 			{
-				CalculateNextMove();
-				MoveToCurrentCell();
+				var newCell = CalculateNextMove();
+				SetCurrentCell(newCell);
 			}
 		}
 
-		private void CalculateNextMove()
+		private ChessCell CalculateNextMove()
 		{
-			//todo
-			Debug.Log("Ход дракона");
+			var playerCell = _board.GetPlayerCell();
+			if (playerCell.Equals(CurrentCell))
+				return CurrentCell;
+			
+			var reachableCells = _board.GetAdjacentCells(CurrentCell);
+			
+			var minCost = int.MaxValue;
+			ChessCell bestCell = null;
+
+			for (byte i = 0; i < reachableCells.Count; i++)
+			{
+				var cell = reachableCells[i];
+				var costToGoalCell = Mathf.Abs(cell.Row - playerCell.Row) + Mathf.Abs(cell.Column - playerCell.Column);
+
+				if (costToGoalCell >= minCost) continue;
+				
+				minCost = costToGoalCell;
+				bestCell = cell;
+			}
+
+			return bestCell;
 		}
 	}
 }
