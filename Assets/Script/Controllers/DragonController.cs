@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Script.Enums;
+﻿using Script.Enums;
 using UnityEngine;
 
 namespace Script.Controllers
@@ -30,18 +29,14 @@ namespace Script.Controllers
 				return CurrentCell;
 			
 			var reachableCells = _board.GetAdjacentCells(CurrentCell);
-			return ChooseCell(reachableCells, playerCell);
-		}
-
-		private static ChessCell ChooseCell(List<ChessCell> reachableNodes, ChessCell playerCell)
-		{
+			
 			var minCost = int.MaxValue;
 			ChessCell bestCell = null;
 
-			for (var i = 0; i < reachableNodes.Count; i++)
+			for (byte i = 0; i < reachableCells.Count; i++)
 			{
-				var cell = reachableNodes[i];
-				var costToGoalCell = EstimateDistance(cell, playerCell);
+				var cell = reachableCells[i];
+				var costToGoalCell = Mathf.Abs(cell.Row - playerCell.Row) + Mathf.Abs(cell.Column - playerCell.Column);
 
 				if (costToGoalCell >= minCost) continue;
 				
@@ -50,11 +45,6 @@ namespace Script.Controllers
 			}
 
 			return bestCell;
-		}
-
-		private static int EstimateDistance(ChessCell cell, ChessCell playerCell)
-		{
-			return Mathf.Abs(cell.Row - playerCell.Row) + Mathf.Abs(cell.Column - playerCell.Column);
 		}
 	}
 }
