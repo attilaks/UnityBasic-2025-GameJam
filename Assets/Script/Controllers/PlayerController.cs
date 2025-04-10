@@ -48,26 +48,22 @@ namespace Script.Controllers
         
         private void TryMove(int rowDelta, int colDelta)
         {
-            int newRow = CurrentCell.Row + rowDelta;
-            int newCol = CurrentCell.Column + colDelta;
+            var newRow = CurrentCell.Row + rowDelta;
+            var newCol = CurrentCell.Column + colDelta;
             
             if (newRow < 0 || newRow >= Board.BoardSize || 
                 newCol < 0 || newCol >= Board.BoardSize)
             {
-                Debug.Log("Нельзя выйти за пределы доски!");
-                return;
+                throw new IndexOutOfRangeException("Нельзя выйти за пределы доски!");
             }
             
-            Transform targetCell = _board.GetCell(newRow, newCol);
+            var targetCell = _board.GetCell(newRow, newCol);
             if (!targetCell)
             {
-                Debug.LogError("Целевая клетка не найдена!");
-                return;
+                throw new Exception("Целевая клетка не найдена!");
             }
             
-            // Можно добавить дополнительные проверки (например, занята ли клетка)
-            
-            SetCurrentCell(targetCell.GetComponent<ChessCell>());
+            SetCurrentCell(targetCell);
         }
 	}
 }

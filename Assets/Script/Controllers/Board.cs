@@ -29,7 +29,7 @@ namespace Script.Controllers
 		private ChessPiece _treasureChest;
 		// private ChessPiece _spawner;
 
-		private Dictionary<int, ChessCell> _cellsDictionary = new();
+		private readonly Dictionary<int, ChessCell> _cellsGameObjectDict = new();
 		
 		public event Action<Turn> NextTurnEvent = delegate { };
 
@@ -109,14 +109,14 @@ namespace Script.Controllers
 					
 					var cellComponent = _boardCells[row, col].gameObject.AddComponent<ChessCell>();
 					cellComponent.SetCoordinates(row, col);
-					_cellsDictionary[cellComponent.GetInstanceID()] = cellComponent;
+					_cellsGameObjectDict[cellComponent.gameObject.GetInstanceID()] = cellComponent;
 				}
 			}
 		}
 		
 		private PlayerController SpawnPlayer()
 		{
-			var spawnCell = GetCell(PlayerStartRow, Random.Range(0, BoardSize));
+			var spawnCell = GetCellTransform(PlayerStartRow, Random.Range(0, BoardSize));
 			if (spawnCell) 
 				return Instantiate(_boardData.Player, spawnCell);
 			
@@ -127,7 +127,7 @@ namespace Script.Controllers
 
 		private DragonController SpawnDragon()
 		{
-			var spawnCell = GetCell(DragonStartRow, Random.Range(0, BoardSize));
+			var spawnCell = GetCellTransform(DragonStartRow, Random.Range(0, BoardSize));
 			if (spawnCell) 
 				return Instantiate(_boardData.Dragon, spawnCell);
 			
@@ -137,7 +137,7 @@ namespace Script.Controllers
 		
 		private ChessPiece SpawnerTreasure()
 		{
-			var spawnCell = GetCell(TreasureStartRow, Random.Range(0, BoardSize));
+			var spawnCell = GetCellTransform(TreasureStartRow, Random.Range(0, BoardSize));
 			if (spawnCell)
 				return Instantiate(_boardData.TreasureChest, spawnCell);
 			
@@ -155,12 +155,21 @@ namespace Script.Controllers
 		// 	return null;
 		// }
 
-		public Transform GetCell(int row, int col)
+		private Transform GetCellTransform(int row, int col)
 		{
 			if (row < 0 || row >= BoardSize || col < 0 || col >= BoardSize)
 				return null;
         
 			return _boardCells[row, col];
+		}
+		
+		public ChessCell GetCell(int row, int col)
+		{
+			if (row < 0 || row >= BoardSize || col < 0 || col >= BoardSize)
+				return null;
+		
+			var cellId = _boardCells[row, col].gameObject.GetInstanceID();
+			return _cellsGameObjectDict[cellId];
 		}
 
 		public ChessCell GetPlayerCell() => _player.CurrentCell;
@@ -169,17 +178,17 @@ namespace Script.Controllers
 		{
 			var adjacentCells = new List<ChessCell>(MaxNeighboursToCell);
 			
-			var leftCell = GetCell(cell.Row, cell.Column - 1);
-			if (leftCell) adjacentCells.Add(leftCell.GetComponent<ChessCell>());
+			var leftCell = GetCellTransform(cell.Row, cell.Column - 1);
+			if (leftCell) adjacentCells.Add(_cellsGameObjectDict[leftCell.gameObject.GetInstanceID()]);
 			
-			var rightCell = GetCell(cell.Row, cell.Column + 1);
-			if (rightCell) adjacentCells.Add(rightCell.GetComponent<ChessCell>());
+			var rightCell = GetCellTransform(cell.Row, cell.Column + 1);
+			if (rightCell) adjacentCells.Add(_cellsGameObjectDict[rightCell.gameObject.GetInstanceID()]);
 			
-			var upperCell = GetCell(cell.Row + 1, cell.Column);
-			if (upperCell) adjacentCells.Add(upperCell.GetComponent<ChessCell>());
+			var upperCell = GetCellTransform(cell.Row + 1, cell.Column);
+			if (upperCell) adjacentCells.Add(_cellsGameObjectDict[upperCell.gameObject.GetInstanceID()]);
 			
-			var lowerCell = GetCell(cell.Row - 1, cell.Column);
-			if (lowerCell) adjacentCells.Add(lowerCell.GetComponent<ChessCell>());
+			var lowerCell = GetCellTransform(cell.Row - 1, cell.Column);
+			if (lowerCell) adjacentCells.Add(_cellsGameObjectDict[lowerCell.gameObject.GetInstanceID()]);
 			
 			return adjacentCells;
 		}
