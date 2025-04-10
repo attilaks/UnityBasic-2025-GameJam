@@ -116,9 +116,9 @@ namespace Script.Controllers
 		
 		private PlayerController SpawnPlayer()
 		{
-			var spawnCell = GetCellTransform(PlayerStartRow, Random.Range(0, BoardSize));
+			var spawnCell = GetCell(PlayerStartRow, Random.Range(0, BoardSize));
 			if (spawnCell) 
-				return Instantiate(_boardData.Player, spawnCell);
+				return Instantiate(_boardData.Player, spawnCell.transform);
 			
 			Debug.LogError("Не удалось найти клетку для спавна игрока!");
 			return null;
@@ -127,9 +127,9 @@ namespace Script.Controllers
 
 		private DragonController SpawnDragon()
 		{
-			var spawnCell = GetCellTransform(DragonStartRow, Random.Range(0, BoardSize));
+			var spawnCell = GetCell(DragonStartRow, Random.Range(0, BoardSize));
 			if (spawnCell) 
-				return Instantiate(_boardData.Dragon, spawnCell);
+				return Instantiate(_boardData.Dragon, spawnCell.transform);
 			
 			Debug.LogError("Не удалось найти клетку для спавна дракона!");
 			return null;
@@ -137,9 +137,9 @@ namespace Script.Controllers
 		
 		private ChessPiece SpawnerTreasure()
 		{
-			var spawnCell = GetCellTransform(TreasureStartRow, Random.Range(0, BoardSize));
+			var spawnCell = GetCell(TreasureStartRow, Random.Range(0, BoardSize));
 			if (spawnCell)
-				return Instantiate(_boardData.TreasureChest, spawnCell);
+				return Instantiate(_boardData.TreasureChest, spawnCell.transform);
 			
 			Debug.LogError("Не удалось найти клетку для спавна сокровища!");
 			return null;
@@ -154,14 +154,6 @@ namespace Script.Controllers
 		// 	Debug.LogError("Не удалось найти клетку для спавна бомбы!");
 		// 	return null;
 		// }
-
-		private Transform GetCellTransform(int row, int col)
-		{
-			if (row < 0 || row >= BoardSize || col < 0 || col >= BoardSize)
-				return null;
-        
-			return _boardCells[row, col];
-		}
 		
 		public ChessCell GetCell(int row, int col)
 		{
@@ -178,16 +170,16 @@ namespace Script.Controllers
 		{
 			var adjacentCells = new List<ChessCell>(MaxNeighboursToCell);
 			
-			var leftCell = GetCellTransform(cell.Row, cell.Column - 1);
+			var leftCell = GetCell(cell.Row, cell.Column - 1);
 			if (leftCell) adjacentCells.Add(_cellsGameObjectDict[leftCell.gameObject.GetInstanceID()]);
 			
-			var rightCell = GetCellTransform(cell.Row, cell.Column + 1);
+			var rightCell = GetCell(cell.Row, cell.Column + 1);
 			if (rightCell) adjacentCells.Add(_cellsGameObjectDict[rightCell.gameObject.GetInstanceID()]);
 			
-			var upperCell = GetCellTransform(cell.Row + 1, cell.Column);
+			var upperCell = GetCell(cell.Row + 1, cell.Column);
 			if (upperCell) adjacentCells.Add(_cellsGameObjectDict[upperCell.gameObject.GetInstanceID()]);
 			
-			var lowerCell = GetCellTransform(cell.Row - 1, cell.Column);
+			var lowerCell = GetCell(cell.Row - 1, cell.Column);
 			if (lowerCell) adjacentCells.Add(_cellsGameObjectDict[lowerCell.gameObject.GetInstanceID()]);
 			
 			return adjacentCells;
