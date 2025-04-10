@@ -20,7 +20,6 @@ namespace Script.Controllers
 			{
 				Instantiate(_defaultBoard, transform);
 			}
-			// Instantiate(BoardManager.ChosenBoard ? BoardManager.ChosenBoard : _defaultBoard, new Vector3(0,0,0), Quaternion.identity, transform);
 		}
 	}
 }

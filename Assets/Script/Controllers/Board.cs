@@ -14,6 +14,7 @@ namespace Script.Controllers
 		[SerializeField] private Transform[] _rows;
 
 		public const int BoardSize = 8;
+		private const byte MaxNeighboursToCell = 4;
 		private const int PlayerStartRow = 0;
 		private const int DragonStartRow = BoardSize - 1;
 		private const int TreasureStartRow = 4;
@@ -25,7 +26,7 @@ namespace Script.Controllers
 		private ChessPiece _treasureChest;
 		// private ChessPiece _spawner;
 
-		private const byte MaxNeighboursToCell = 4;
+		private Dictionary<int, ChessCell> _cellsDictionary = new();
 		
 		public event Action<Turn> NextTurnEvent = delegate { };
 
@@ -41,8 +42,8 @@ namespace Script.Controllers
 			_treasureChest = SpawnerTreasure();
 			// _spawner = SpawnerBombs();
 
-			_player.EndOfTurnEvent += PassMove;
-			_dragon.EndOfTurnEvent += PassMove;
+			_player.EndOfTurnEvent += HandleEndOfTurn;
+			_dragon.EndOfTurnEvent += HandleEndOfTurn;
 			
 			NextTurnEvent.Invoke(Turn.Player);
 		}
@@ -53,13 +54,21 @@ namespace Script.Controllers
 
 			if (_player && _dragon)
 			{
-				_player.EndOfTurnEvent -= PassMove;
-				_dragon.EndOfTurnEvent -= PassMove;
+				_player.EndOfTurnEvent -= HandleEndOfTurn;
+				_dragon.EndOfTurnEvent -= HandleEndOfTurn;
 			}
 		}
 
-		private void PassMove(Turn turnSide)
+		private void HandleEndOfTurn(Turn turnSide)
 		{
+			if (turnSide == Turn.Dragon)
+			{
+				if (_dragon.CurrentCell.Equals(_player.CurrentCell))
+				{
+					
+				}
+			}
+			
 			switch (turnSide)
 			{
 				case Turn.Player:
@@ -83,6 +92,7 @@ namespace Script.Controllers
 					
 					var cellComponent = _boardCells[row, col].gameObject.AddComponent<ChessCell>();
 					cellComponent.SetCoordinates(row, col);
+					_cellsDictionary[cellComponent.GetInstanceID()] = cellComponent;
 				}
 			}
 		}
