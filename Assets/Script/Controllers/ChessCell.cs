@@ -31,7 +31,7 @@ namespace Script.Controllers
 
 		public bool Equals(ChessCell other)
 		{
-			if (other is null) return false;
+			if (!other) return false;
 			if (ReferenceEquals(this, other)) return true;
 			return Row == other.Row && Column == other.Column;
 		}

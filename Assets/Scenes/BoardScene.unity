@@ -774,8 +774,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0b37473e58b51c42bf8495c851fb03c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _boardSpawner: {fileID: 1025692356}
   _victoryScreen: {fileID: 1092070617}
   _defeatScreen: {fileID: 1562458550}
+  _fadeDuration: 0.5
+  _scaleDuration: 0.3
 --- !u!4 &283917319
 Transform:
   m_ObjectHideFlags: 0

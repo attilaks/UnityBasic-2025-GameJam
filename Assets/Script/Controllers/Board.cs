@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Script.Enums;
 using ScriptableObjects;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
@@ -12,8 +13,11 @@ namespace Script.Controllers
 	{
 		[SerializeField] private BoardData _boardData;
 		[SerializeField] private Transform[] _rows;
+		
+		public event Action<bool> OnEndOfGame = delegate { };
 
 		public const int BoardSize = 8;
+		private const byte MaxNeighboursToCell = 4;
 		private const int PlayerStartRow = 0;
 		private const int DragonStartRow = BoardSize - 1;
 		private const int TreasureStartRow = 4;
@@ -25,7 +29,7 @@ namespace Script.Controllers
 		private ChessPiece _treasureChest;
 		// private ChessPiece _spawner;
 
-		private const byte MaxNeighboursToCell = 4;
+		private readonly Dictionary<int, ChessCell> _cellsGameObjectDict = new();
 		
 		public event Action<Turn> NextTurnEvent = delegate { };
 
@@ -41,8 +45,8 @@ namespace Script.Controllers
 			_treasureChest = SpawnerTreasure();
 			// _spawner = SpawnerBombs();
 
-			_player.EndOfTurnEvent += PassMove;
-			_dragon.EndOfTurnEvent += PassMove;
+			_player.EndOfTurnEvent += HandleEndOfTurn;
+			_dragon.EndOfTurnEvent += HandleEndOfTurn;
 			
 			NextTurnEvent.Invoke(Turn.Player);
 		}
@@ -53,13 +57,25 @@ namespace Script.Controllers
 
 			if (_player && _dragon)
 			{
-				_player.EndOfTurnEvent -= PassMove;
-				_dragon.EndOfTurnEvent -= PassMove;
+				_player.EndOfTurnEvent -= HandleEndOfTurn;
+				_dragon.EndOfTurnEvent -= HandleEndOfTurn;
 			}
 		}
 
-		private void PassMove(Turn turnSide)
+		private void HandleEndOfTurn(Turn turnSide)
 		{
+			if (_dragon.CurrentCell.Equals(_player.CurrentCell))
+			{
+				PlayerIsDefeated();
+				return;
+			}
+			
+			if (_player.CurrentCell.Equals(_treasureChest.CurrentCell))
+			{
+				PlayerWon();
+				return;
+			}
+			
 			switch (turnSide)
 			{
 				case Turn.Player:
@@ -73,6 +89,16 @@ namespace Script.Controllers
 			}
 		}
 
+		private void PlayerWon()
+		{
+			OnEndOfGame.Invoke(true);
+		}
+
+		private void PlayerIsDefeated()
+		{
+			OnEndOfGame.Invoke(false);
+		}
+
 		private void InitializeBoard()
 		{
 			for (byte row = 0; row < _rows.Length; row++)
@@ -83,6 +109,7 @@ namespace Script.Controllers
 					
 					var cellComponent = _boardCells[row, col].gameObject.AddComponent<ChessCell>();
 					cellComponent.SetCoordinates(row, col);
+					_cellsGameObjectDict[cellComponent.gameObject.GetInstanceID()] = cellComponent;
 				}
 			}
 		}
@@ -91,7 +118,7 @@ namespace Script.Controllers
 		{
 			var spawnCell = GetCell(PlayerStartRow, Random.Range(0, BoardSize));
 			if (spawnCell) 
-				return Instantiate(_boardData.Player, spawnCell);
+				return Instantiate(_boardData.Player, spawnCell.transform);
 			
 			Debug.LogError("Не удалось найти клетку для спавна игрока!");
 			return null;
@@ -102,7 +129,7 @@ namespace Script.Controllers
 		{
 			var spawnCell = GetCell(DragonStartRow, Random.Range(0, BoardSize));
 			if (spawnCell) 
-				return Instantiate(_boardData.Dragon, spawnCell);
+				return Instantiate(_boardData.Dragon, spawnCell.transform);
 			
 			Debug.LogError("Не удалось найти клетку для спавна дракона!");
 			return null;
@@ -112,7 +139,7 @@ namespace Script.Controllers
 		{
 			var spawnCell = GetCell(TreasureStartRow, Random.Range(0, BoardSize));
 			if (spawnCell)
-				return Instantiate(_boardData.TreasureChest, spawnCell);
+				return Instantiate(_boardData.TreasureChest, spawnCell.transform);
 			
 			Debug.LogError("Не удалось найти клетку для спавна сокровища!");
 			return null;
@@ -127,13 +154,14 @@ namespace Script.Controllers
 		// 	Debug.LogError("Не удалось найти клетку для спавна бомбы!");
 		// 	return null;
 		// }
-
-		public Transform GetCell(int row, int col)
+		
+		public ChessCell GetCell(int row, int col)
 		{
 			if (row < 0 || row >= BoardSize || col < 0 || col >= BoardSize)
 				return null;
-        
-			return _boardCells[row, col];
+		
+			var cellId = _boardCells[row, col].gameObject.GetInstanceID();
+			return _cellsGameObjectDict[cellId];
 		}
 
 		public ChessCell GetPlayerCell() => _player.CurrentCell;
@@ -143,16 +171,16 @@ namespace Script.Controllers
 			var adjacentCells = new List<ChessCell>(MaxNeighboursToCell);
 			
 			var leftCell = GetCell(cell.Row, cell.Column - 1);
-			if (leftCell) adjacentCells.Add(leftCell.GetComponent<ChessCell>());
+			if (leftCell) adjacentCells.Add(_cellsGameObjectDict[leftCell.gameObject.GetInstanceID()]);
 			
 			var rightCell = GetCell(cell.Row, cell.Column + 1);
-			if (rightCell) adjacentCells.Add(rightCell.GetComponent<ChessCell>());
+			if (rightCell) adjacentCells.Add(_cellsGameObjectDict[rightCell.gameObject.GetInstanceID()]);
 			
 			var upperCell = GetCell(cell.Row + 1, cell.Column);
-			if (upperCell) adjacentCells.Add(upperCell.GetComponent<ChessCell>());
+			if (upperCell) adjacentCells.Add(_cellsGameObjectDict[upperCell.gameObject.GetInstanceID()]);
 			
 			var lowerCell = GetCell(cell.Row - 1, cell.Column);
-			if (lowerCell) adjacentCells.Add(lowerCell.GetComponent<ChessCell>());
+			if (lowerCell) adjacentCells.Add(_cellsGameObjectDict[lowerCell.gameObject.GetInstanceID()]);
 			
 			return adjacentCells;
 		}
