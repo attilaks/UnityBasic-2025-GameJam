@@ -20,14 +20,15 @@ namespace Script.Controllers
 		private const byte MaxNeighboursToCell = 4;
 		private const int PlayerStartRow = 0;
 		private const int DragonStartRow = BoardSize - 1;
-		private const int TreasureStartRow = 4;
-		// private const int BombsRow = 2;
+		private const int MaxTreasureStartCol = 6;
+		private const int MaxTreasureStartRow = 5;
+		private const int BombsRow = 2;
 
 		private Transform[,] _boardCells;
 		private PlayerController _player;
 		private DragonController _dragon;
 		private ChessPiece _treasureChest;
-		// private ChessPiece _spawner;
+		private ChessPiece _spawner;
 
 		private readonly Dictionary<int, ChessCell> _cellsGameObjectDict = new();
 		
@@ -43,7 +44,7 @@ namespace Script.Controllers
 			_player = SpawnPlayer();
 			_dragon = SpawnDragon();
 			_treasureChest = SpawnerTreasure();
-			// _spawner = SpawnerBombs();
+			_spawner = SpawnerBombs();
 
 			_player.EndOfTurnEvent += HandleEndOfTurn;
 			_dragon.EndOfTurnEvent += HandleEndOfTurn;
@@ -92,6 +93,7 @@ namespace Script.Controllers
 		private void PlayerWon()
 		{
 			OnEndOfGame.Invoke(true);
+			
 		}
 
 		private void PlayerIsDefeated()
@@ -137,7 +139,7 @@ namespace Script.Controllers
 		
 		private ChessPiece SpawnerTreasure()
 		{
-			var spawnCell = GetCell(TreasureStartRow, Random.Range(0, BoardSize));
+			var spawnCell = GetCell(Random.Range(3, MaxTreasureStartRow), Random.Range(2, MaxTreasureStartCol));
 			if (spawnCell)
 				return Instantiate(_boardData.TreasureChest, spawnCell.transform);
 			
@@ -145,15 +147,17 @@ namespace Script.Controllers
 			return null;
 		}
 
-		// private ChessPiece SpawnerBombs()
-		// {
-		// 	var spawnCell = GetCell(BombsRow, Random.Range(0, BoardSize));
-		// 	if (spawnCell) 
-		// 		return Instantiate(_boardData.Bomb, spawnCell);
-		// 	
-		// 	Debug.LogError("Не удалось найти клетку для спавна бомбы!");
-		// 	return null;
-		// }
+		private ChessPiece SpawnerBombs()
+		{
+			var spawnCell = GetCell(BombsRow, Random.Range(0, BoardSize));
+			if (spawnCell) 
+				return Instantiate(_boardData.Bomb, spawnCell.transform);
+			
+			Debug.LogError("Не удалось найти клетку для спавна бомбы!");
+			return null;
+		}
+		
+		
 		
 		public ChessCell GetCell(int row, int col)
 		{
