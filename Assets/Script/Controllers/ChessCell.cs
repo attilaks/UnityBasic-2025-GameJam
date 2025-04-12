@@ -1,4 +1,5 @@
 ﻿using System;
+using Script.Enums;
 using UnityEngine;
 
 namespace Script.Controllers
@@ -7,6 +8,8 @@ namespace Script.Controllers
 	{
 		public byte Row { get; private set; }
 		public byte Column { get; private set; }
+		
+		public event Action<Actor> OnCellEnter = delegate { };
 		
 		private string ChessNotation =>  $"{(char)('a' + Column)}{8 - Row}";
 		private bool _isInitialized;

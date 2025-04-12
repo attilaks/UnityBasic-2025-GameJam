@@ -780,8 +780,6 @@ MonoBehaviour:
   _defeatScreen: {fileID: 1562458550}
   _fadeDuration: 0.5
   _scaleDuration: 0.3
-  _board: {fileID: 1025692354}
-  _clue: {fileID: 909220490}
 --- !u!4 &283917319
 Transform:
   m_ObjectHideFlags: 0
@@ -1416,7 +1414,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2d966b8ec11d4d744b9adc647ca4c2e2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 40ecd49dba8400842964e33e15f91a72, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
