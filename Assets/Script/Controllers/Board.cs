@@ -21,10 +21,10 @@ namespace Script.Controllers
 		private const byte PlayerStartRow = 0;
 		private const byte SpeedBootsRow = 1;
 		private const byte BombsRow = 2;
-		private const byte MinTreasureStartCol = 4;
-		private const byte MaxTreasureStartCol = 5;
-		private const byte MinTreasureStartRow = 4;
-		private const byte MaxTreasureStartRow = 5;
+		private const byte MinTreasureStartCol = 3;
+		private const byte MaxTreasureStartCol = 4;
+		private const byte MinTreasureStartRow = 3;
+		private const byte MaxTreasureStartRow = 4;
 		private int DragonStartRow => BoardSize - 1;
 		
 		private const byte EachItemCount = 2;
