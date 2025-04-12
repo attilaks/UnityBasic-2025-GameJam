@@ -38,7 +38,7 @@ namespace Script.Controllers
 		private readonly ChessPiece[] _speedBoots = new ChessPiece[2];
 		private readonly Dictionary<int, ChessCell> _cellsDict = new();
 		
-		public event Action<Turn> NextTurnEvent = delegate { };
+		public event Action<Actor> NextTurnEvent = delegate { };
 
 		private void Awake()
 		{
@@ -56,7 +56,7 @@ namespace Script.Controllers
 			_player.EndOfTurnEvent += HandleEndOfTurn;
 			_dragon.EndOfTurnEvent += HandleEndOfTurn;
 			
-			NextTurnEvent.Invoke(Turn.Player);
+			NextTurnEvent.Invoke(Actor.Player);
 		}
 
 		private void OnDestroy()
@@ -70,7 +70,7 @@ namespace Script.Controllers
 			}
 		}
 
-		private void HandleEndOfTurn(Turn turnSide)
+		private void HandleEndOfTurn(Actor actorSide)
 		{
 			if (_dragon.CurrentCell.Equals(_player.CurrentCell))
 			{
@@ -84,16 +84,16 @@ namespace Script.Controllers
 				return;
 			}
 			
-			switch (turnSide)
+			switch (actorSide)
 			{
-				case Turn.Player:
-					NextTurnEvent.Invoke(Turn.Dragon);
+				case Actor.Player:
+					NextTurnEvent.Invoke(Actor.Dragon);
 					break;
-				case Turn.Dragon:
-					NextTurnEvent.Invoke(Turn.Player);
+				case Actor.Dragon:
+					NextTurnEvent.Invoke(Actor.Player);
 					break;
 				default:
-					throw new ArgumentOutOfRangeException(nameof(turnSide), turnSide, null);
+					throw new ArgumentOutOfRangeException(nameof(actorSide), actorSide, null);
 			}
 		}
 

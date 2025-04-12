@@ -5,7 +5,7 @@ namespace Script.Controllers
 {
 	public sealed class DragonController : MovingChessPiece
 	{
-		protected override Turn _turn => Turn.Dragon;
+		protected override Actor Actor => Actor.Dragon;
 		
 		private void Update()
 		{

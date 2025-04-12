@@ -1,6 +1,6 @@
 ﻿namespace Script.Enums
 {
-	public enum Turn
+	public enum Actor
 	{
 		Player = 0,
 		Dragon = 1

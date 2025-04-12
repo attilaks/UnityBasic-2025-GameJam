@@ -12,7 +12,7 @@ namespace Script.Controllers
         [SerializeField] private KeyCode _leftKey = KeyCode.LeftArrow;
         [SerializeField] private KeyCode _rightKey = KeyCode.RightArrow;
 
-        protected override Turn _turn => Turn.Player;
+        protected override Actor Actor => Actor.Player;
 
         private void Update()
         {
