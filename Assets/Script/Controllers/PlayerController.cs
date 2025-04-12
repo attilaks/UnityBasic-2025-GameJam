@@ -51,7 +51,7 @@ namespace Script.Controllers
             var newRow = CurrentCell.Row + rowDelta;
             var newCol = CurrentCell.Column + colDelta;
             
-            if (newRow < 0 || newRow >= Board.BoardSize || newCol < 0 || newCol >= Board.BoardSize)
+            if (newRow < 0 || newRow >= _board.BoardSize || newCol < 0 || newCol >= _board.BoardSize)
                 return;
             
             var targetCell = _board.GetCell(newRow, newCol);

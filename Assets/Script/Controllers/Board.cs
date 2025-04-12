@@ -16,23 +16,26 @@ namespace Script.Controllers
 		
 		public event Action<bool> OnEndOfGame = delegate { };
 
-		public const int BoardSize = 8;
+		public int BoardSize => _rows.Length;
 		private const byte MaxNeighboursToCell = 4;
-		private const int PlayerStartRow = 0;
-		private const int DragonStartRow = BoardSize - 1;
-		private const int MinTreasureStartCol = 4;
-		private const int MaxTreasureStartCol = 5;
-		private const int MinTreasureStartRow = 4;
-		private const int MaxTreasureStartRow = 5;
-		private const int BombsRow = 2;
-
-		private Transform[,] _boardCells;
+		private const byte PlayerStartRow = 0;
+		private const byte SpeedBootsRow = 1;
+		private const byte BombsRow = 2;
+		private const byte MinTreasureStartCol = 4;
+		private const byte MaxTreasureStartCol = 5;
+		private const byte MinTreasureStartRow = 4;
+		private const byte MaxTreasureStartRow = 5;
+		private int DragonStartRow => BoardSize - 1;
+		
+		private const byte EachItemCount = 2;
+		
+		private ChessCell[,] _boardCells;
 		private PlayerController _player;
 		private DragonController _dragon;
 		private ChessPiece _treasureChest;
-		private ChessPiece _spawner;
-
-		private readonly Dictionary<int, ChessCell> _cellsGameObjectDict = new();
+		
+		private readonly ChessPiece[] _speedBoots = new ChessPiece[2];
+		private readonly Dictionary<int, ChessCell> _cellsDict = new();
 		
 		public event Action<Turn> NextTurnEvent = delegate { };
 
@@ -40,13 +43,14 @@ namespace Script.Controllers
 		{
 			if (SceneManager.GetActiveScene().buildIndex != 1) return;
 			
-			_boardCells = new Transform[BoardSize, BoardSize];
+			_boardCells = new ChessCell[BoardSize, BoardSize];
 			InitializeBoard();
 			
 			_player = SpawnPlayer();
 			_dragon = SpawnDragon();
 			_treasureChest = SpawnerTreasure();
-			_spawner = SpawnerBombs();
+			SpawnBombs();
+			SpawnSpeedBoots();
 
 			_player.EndOfTurnEvent += HandleEndOfTurn;
 			_dragon.EndOfTurnEvent += HandleEndOfTurn;
@@ -109,11 +113,12 @@ namespace Script.Controllers
 			{
 				for (byte col = 0; col < _rows[row].childCount; col++)
 				{
-					_boardCells[row, col] = _rows[row].GetChild(col);
-					
-					var cellComponent = _boardCells[row, col].gameObject.AddComponent<ChessCell>();
+					var cellTransform = _rows[row].GetChild(col);
+					var cellComponent = cellTransform.gameObject.AddComponent<ChessCell>();
 					cellComponent.SetCoordinates(row, col);
-					_cellsGameObjectDict[cellComponent.gameObject.GetInstanceID()] = cellComponent;
+					
+					_boardCells[row, col] = cellComponent;
+					_cellsDict[cellComponent.GetInstanceID()] = cellComponent;
 				}
 			}
 		}
@@ -121,8 +126,10 @@ namespace Script.Controllers
 		private PlayerController SpawnPlayer()
 		{
 			var spawnCell = GetCell(PlayerStartRow, Random.Range(0, BoardSize));
-			if (spawnCell) 
+			if (spawnCell)
+			{
 				return Instantiate(_boardData.Player, spawnCell.transform);
+			}
 			
 			Debug.LogError("Не удалось найти клетку для спавна игрока!");
 			return null;
@@ -132,8 +139,10 @@ namespace Script.Controllers
 		private DragonController SpawnDragon()
 		{
 			var spawnCell = GetCell(DragonStartRow, Random.Range(0, BoardSize));
-			if (spawnCell) 
+			if (spawnCell)
+			{
 				return Instantiate(_boardData.Dragon, spawnCell.transform);
+			}
 			
 			Debug.LogError("Не удалось найти клетку для спавна дракона!");
 			return null;
@@ -141,34 +150,52 @@ namespace Script.Controllers
 		
 		private ChessPiece SpawnerTreasure()
 		{
-			var spawnCell = GetCell(Random.Range(MinTreasureStartRow, MaxTreasureStartRow), 
+			var spawnCell = GetCell(Random.Range(MinTreasureStartRow, MaxTreasureStartRow),
 				Random.Range(MinTreasureStartCol, MaxTreasureStartCol));
 			if (spawnCell)
+			{
 				return Instantiate(_boardData.TreasureChest, spawnCell.transform);
-			
+			}
+
 			Debug.LogError("Не удалось найти клетку для спавна сокровища!");
 			return null;
 		}
 
-		private ChessPiece SpawnerBombs()
+		private void SpawnBombs()
 		{
-			var spawnCell = GetCell(BombsRow, Random.Range(0, BoardSize));
-			if (spawnCell) 
-				return Instantiate(_boardData.Bomb, spawnCell.transform);
-			
-			Debug.LogError("Не удалось найти клетку для спавна бомбы!");
-			return null;
+			for (byte i = 0; i < EachItemCount; ++i)
+			{
+				var row = i % 2 == 0 ? BombsRow : BoardSize - 1 - BombsRow;
+				var spawnCell = GetCell(row, Random.Range(0, BoardSize));
+				if (spawnCell)
+				{
+					Instantiate(_boardData.Bomb, spawnCell.transform);
+				} 
+			}
 		}
 		
-		
+		private void SpawnSpeedBoots()
+		{
+			for (var i = 0; i < EachItemCount; i++)
+			{
+				var row = i % 2 == 0 ? SpeedBootsRow : BoardSize - 1 - SpeedBootsRow;
+				var spawnCell = GetCell(row, Random.Range(0, BoardSize));
+				if (spawnCell)
+				{
+					_speedBoots[i] = Instantiate(_boardData.SpeedBoot, spawnCell.transform);
+				}
+				else
+					Debug.LogError("Не удалось найти клетку для спавна бустера!");
+			}
+		}
 		
 		public ChessCell GetCell(int row, int col)
 		{
 			if (row < 0 || row >= BoardSize || col < 0 || col >= BoardSize)
 				return null;
 		
-			var cellId = _boardCells[row, col].gameObject.GetInstanceID();
-			return _cellsGameObjectDict[cellId];
+			var cellId = _boardCells[row, col].GetInstanceID();
+			return _cellsDict[cellId];
 		}
 
 		public ChessCell GetPlayerCell() => _player.CurrentCell;
@@ -178,16 +205,16 @@ namespace Script.Controllers
 			var adjacentCells = new List<ChessCell>(MaxNeighboursToCell);
 			
 			var leftCell = GetCell(cell.Row, cell.Column - 1);
-			if (leftCell) adjacentCells.Add(_cellsGameObjectDict[leftCell.gameObject.GetInstanceID()]);
+			if (leftCell) adjacentCells.Add(_cellsDict[leftCell.GetInstanceID()]);
 			
 			var rightCell = GetCell(cell.Row, cell.Column + 1);
-			if (rightCell) adjacentCells.Add(_cellsGameObjectDict[rightCell.gameObject.GetInstanceID()]);
+			if (rightCell) adjacentCells.Add(_cellsDict[rightCell.GetInstanceID()]);
 			
 			var upperCell = GetCell(cell.Row + 1, cell.Column);
-			if (upperCell) adjacentCells.Add(_cellsGameObjectDict[upperCell.gameObject.GetInstanceID()]);
+			if (upperCell) adjacentCells.Add(_cellsDict[upperCell.GetInstanceID()]);
 			
 			var lowerCell = GetCell(cell.Row - 1, cell.Column);
-			if (lowerCell) adjacentCells.Add(_cellsGameObjectDict[lowerCell.gameObject.GetInstanceID()]);
+			if (lowerCell) adjacentCells.Add(_cellsDict[lowerCell.GetInstanceID()]);
 			
 			return adjacentCells;
 		}
