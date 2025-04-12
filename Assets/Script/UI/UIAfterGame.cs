@@ -58,7 +58,6 @@ namespace Script.UI
         
         public void RestartGame()
         {
-            Time.timeScale = 1;
             UnityEngine.SceneManagement.SceneManager.LoadScene(0);
         }
     

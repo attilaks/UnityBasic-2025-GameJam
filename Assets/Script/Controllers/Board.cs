@@ -20,7 +20,9 @@ namespace Script.Controllers
 		private const byte MaxNeighboursToCell = 4;
 		private const int PlayerStartRow = 0;
 		private const int DragonStartRow = BoardSize - 1;
-		private const int MaxTreasureStartCol = 6;
+		private const int MinTreasureStartCol = 4;
+		private const int MaxTreasureStartCol = 5;
+		private const int MinTreasureStartRow = 4;
 		private const int MaxTreasureStartRow = 5;
 		private const int BombsRow = 2;
 
@@ -139,7 +141,8 @@ namespace Script.Controllers
 		
 		private ChessPiece SpawnerTreasure()
 		{
-			var spawnCell = GetCell(Random.Range(3, MaxTreasureStartRow), Random.Range(2, MaxTreasureStartCol));
+			var spawnCell = GetCell(Random.Range(MinTreasureStartRow, MaxTreasureStartRow), 
+				Random.Range(MinTreasureStartCol, MaxTreasureStartCol));
 			if (spawnCell)
 				return Instantiate(_boardData.TreasureChest, spawnCell.transform);
 			
