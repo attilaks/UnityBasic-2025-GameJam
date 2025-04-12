@@ -24,7 +24,7 @@ namespace Script.Controllers
 			}
 			else
 			{
-				_currentBoard = Instantiate(_defaultBoard, transform);
+				_currentBoard = Instantiate(_defaultBoard, new Vector3(0,0,0), Quaternion.identity, transform);
 			}
 
 			_currentBoard.OnEndOfGame += OnEndOfGameHandler;
