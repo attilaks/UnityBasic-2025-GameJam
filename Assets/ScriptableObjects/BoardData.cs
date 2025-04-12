@@ -12,10 +12,12 @@ namespace ScriptableObjects
 		[SerializeField] private DragonController _dragon;
 		[SerializeField] private ChessPiece _treasureChest;
 		[SerializeField] private ChessPiece _bomb;
+		[SerializeField] private ChessPiece _speedBoot;
 		
 		public PlayerController Player => _player;
 		public DragonController Dragon => _dragon;
 		public ChessPiece TreasureChest => _treasureChest;
 		public ChessPiece Bomb => _bomb;
+		public ChessPiece SpeedBoot => _speedBoot;
 	}
 }

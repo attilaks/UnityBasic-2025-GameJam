@@ -12,7 +12,7 @@ namespace Script.Controllers
         [SerializeField] private KeyCode _leftKey = KeyCode.LeftArrow;
         [SerializeField] private KeyCode _rightKey = KeyCode.RightArrow;
 
-        protected override Turn _turn => Turn.Player;
+        protected override Actor Actor => Actor.Player;
 
         private void Update()
         {
@@ -51,17 +51,11 @@ namespace Script.Controllers
             var newRow = CurrentCell.Row + rowDelta;
             var newCol = CurrentCell.Column + colDelta;
             
-            if (newRow < 0 || newRow >= Board.BoardSize || 
-                newCol < 0 || newCol >= Board.BoardSize)
-            {
-                throw new IndexOutOfRangeException("Нельзя выйти за пределы доски!");
-            }
+            if (newRow < 0 || newRow >= _board.BoardSize || newCol < 0 || newCol >= _board.BoardSize)
+                return;
             
             var targetCell = _board.GetCell(newRow, newCol);
-            if (!targetCell)
-            {
-                throw new Exception("Целевая клетка не найдена!");
-            }
+            if (!targetCell) return;
             
             SetCurrentCell(targetCell);
         }

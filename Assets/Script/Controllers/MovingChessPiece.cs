@@ -10,11 +10,11 @@ namespace Script.Controllers
 		[Header("Настройки")]
 		[SerializeField] protected float _smoothMoveSpeed = 5f;
 		
-		public event Action<Turn> EndOfTurnEvent = delegate { };
+		public event Action<Actor> EndOfTurnEvent = delegate { };
 		
 		protected bool _isMoving;
 		protected bool _isMyTurn;
-		protected virtual Turn _turn => Turn.Dragon;
+		protected virtual Actor Actor => Actor.Dragon;
 		
 		protected override void Awake()
 		{
@@ -31,9 +31,9 @@ namespace Script.Controllers
 			_board.OnEndOfGame -= OnEndOfGame;
 		}
 
-		private void OnNextTurn(Turn nextTurnSide)
+		private void OnNextTurn(Actor nextActorSide)
 		{
-			_isMyTurn = nextTurnSide == _turn;
+			_isMyTurn = nextActorSide == Actor;
 		}
 		
 		private void OnEndOfGame(bool playerWon)
@@ -57,7 +57,7 @@ namespace Script.Controllers
 			{
 				transform.localPosition = _aboveCellPosition;
 				_isMoving = false;
-				EndOfTurnEvent.Invoke(_turn);
+				EndOfTurnEvent.Invoke(Actor);
 			}
 		}
 	}
