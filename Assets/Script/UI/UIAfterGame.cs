@@ -18,6 +18,9 @@ namespace Script.UI
         [SerializeField] private float _fadeDuration = 0.5f;
         [SerializeField] private float _scaleDuration = 0.3f;
 
+        [SerializeField] private GameObject _board;
+        [SerializeField] private GameObject _clue;
+
         private void Awake()
         {
             _boardSpawner.OnEndOfGame += OnEndOfGameHandler;
@@ -33,10 +36,14 @@ namespace Script.UI
             if (playerWon)
             {
                 ShowVictoryScreen();
+                _board.SetActive(false);
+                _clue.SetActive(false);
             }
             else
             {
                 ShowDefeatScreen();
+                _board.SetActive(false);
+                _clue.SetActive(false);
             }
         }
 
