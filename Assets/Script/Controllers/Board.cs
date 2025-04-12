@@ -150,8 +150,8 @@ namespace Script.Controllers
 		
 		private ChessPiece SpawnerTreasure()
 		{
-			var spawnCell = GetCell(Random.Range(MinTreasureStartRow, MaxTreasureStartRow),
-				Random.Range(MinTreasureStartCol, MaxTreasureStartCol));
+			var spawnCell = GetCell(Random.Range(MinTreasureStartRow, MaxTreasureStartRow + 1),
+				Random.Range(MinTreasureStartCol, MaxTreasureStartCol + 1));
 			if (spawnCell)
 			{
 				return Instantiate(_boardData.TreasureChest, spawnCell.transform);
@@ -184,8 +184,6 @@ namespace Script.Controllers
 				{
 					_speedBoots[i] = Instantiate(_boardData.SpeedBoot, spawnCell.transform);
 				}
-				else
-					Debug.LogError("Не удалось найти клетку для спавна бустера!");
 			}
 		}
 		
