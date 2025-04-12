@@ -1,33 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using Script.Enums;
+using Script.Interfaces;
 using ScriptableObjects;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 namespace Script.Controllers
 {
-	public sealed class Board : MonoBehaviour
+	public sealed class Board : MonoBehaviour, IBoard
 	{
 		[SerializeField] private BoardData _boardData;
 		[SerializeField] private Transform[] _rows;
 		
 		public event Action<bool> OnEndOfGame = delegate { };
-
-		public int BoardSize => _rows.Length;
+		
+		private const byte EachItemCount = 2;
 		private const byte MaxNeighboursToCell = 4;
+		
 		private const byte PlayerStartRow = 0;
 		private const byte SpeedBootsRow = 1;
 		private const byte BombsRow = 2;
-		private const byte MinTreasureStartCol = 3;
-		private const byte MaxTreasureStartCol = 4;
-		private const byte MinTreasureStartRow = 3;
-		private const byte MaxTreasureStartRow = 4;
-		private int DragonStartRow => BoardSize - 1;
 		
-		private const byte EachItemCount = 2;
+		public int BoardSize => _rows.Length;
+		private int MinTreasureStartCol => BoardSize / 2 - 1;
+		private int MaxTreasureStartCol => BoardSize / 2;
+		private int MinTreasureStartRow => BoardSize / 2 - 1;
+		private int MaxTreasureStartRow => BoardSize / 2;
+		private int DragonStartRow => BoardSize - 1;
 		
 		private ChessCell[,] _boardCells;
 		private PlayerController _player;

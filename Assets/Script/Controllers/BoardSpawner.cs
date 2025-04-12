@@ -1,5 +1,6 @@
 ﻿using System;
 using Script.GlobalManagers;
+using Script.Interfaces;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 
@@ -12,7 +13,7 @@ namespace Script.Controllers
 		
 		public event Action<bool> OnEndOfGame = delegate { };
 		
-		private Board _currentBoard;
+		private IBoard _currentBoard;
 
 		private void Awake()
 		{
