@@ -8,10 +8,15 @@ namespace Script.UI
 {
     public class ChoiseBoard : MonoBehaviour
     {
+        [Header("Boards")]
         [SerializeField] private Board _firstBoard;
         [SerializeField] private Board _secondBoard;
 
+        [Header("Buttons")]
         [SerializeField] private Button _selectBoardButton;
+        
+        [Header("Audio")]
+        [SerializeField] private AudioSource _backgroundAudio;
 
         private Board _currentBoard;
         private SpawnerBomb _spawner;
@@ -52,8 +57,12 @@ namespace Script.UI
         {
             if (!_currentBoard) return;
             
-            BoardManager.ChosenBoard = _currentBoard;
-            DontDestroyOnLoad(BoardManager.ChosenBoard);
+            InterSceneObjects.ChosenBoard = _currentBoard;
+            InterSceneObjects.BackgroundMusic = _backgroundAudio;
+            
+            DontDestroyOnLoad(InterSceneObjects.ChosenBoard);
+            DontDestroyOnLoad(InterSceneObjects.BackgroundMusic);
+            
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
     }
