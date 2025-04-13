@@ -57,9 +57,6 @@ namespace Script.Controllers
 			SpawnBombs();
 			SpawnSpeedBoots();
 			SpawnPortals();
-
-			_player.EndOfTurnEvent += HandleEndOfTurn;
-			_dragon.EndOfTurnEvent += HandleEndOfTurn;
 			
 			NextTurnEvent.Invoke(Actor.Player);
 		}
@@ -68,9 +65,13 @@ namespace Script.Controllers
 		{
 			if (SceneManager.GetActiveScene().buildIndex != 1) return;
 
-			if (_player && _dragon)
+			if (_player)
 			{
 				_player.EndOfTurnEvent -= HandleEndOfTurn;
+			}
+
+			if (_dragon)
+			{
 				_dragon.EndOfTurnEvent -= HandleEndOfTurn;
 			}
 		}
@@ -165,18 +166,12 @@ namespace Script.Controllers
 
 		private PlayerController SpawnPlayer([CanBeNull] ChessCell cell = null)
 		{
-			if (_player)
-			{
-				_player.EndOfTurnEvent -= HandleEndOfTurn;
-				Destroy(_player.gameObject);
-			}
+			if (_player) Destroy(_player.gameObject);
 			
 			var spawnCell = cell ? cell : GetCell(PlayerStartRow, Random.Range(1, BoardSize - 1));
 			if (spawnCell)
 			{
 				var player = Instantiate(_boardData.Player, spawnCell.transform);
-				// при попадании в портал игрок уничтожается и создается в месте другого портала
-				// поэтому подписка происходит здесь. Криво, но мы спешим
 				player.EndOfTurnEvent += HandleEndOfTurn;
 				return player;
 			}
@@ -186,10 +181,14 @@ namespace Script.Controllers
 
 		private DragonController SpawnDragon([CanBeNull] ChessCell cell = null)
 		{
+			if (_dragon) Destroy(_dragon.gameObject);
+			
 			var spawnCell = cell ? cell : GetCell(DragonStartRow, Random.Range(1, BoardSize - 1));
 			if (spawnCell)
 			{
-				return Instantiate(_boardData.Dragon, spawnCell.transform);
+				var dragon = Instantiate(_boardData.Dragon, spawnCell.transform);
+				dragon.EndOfTurnEvent += HandleEndOfTurn;
+				return dragon;
 			}
 			
 			throw new Exception("Не удалось найти клетку для спавна дракона!");
