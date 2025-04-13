@@ -11,6 +11,7 @@ using Random = UnityEngine.Random;
 
 namespace Script.Controllers
 {
+	[RequireComponent(typeof(AudioSource))]
 	public sealed class Board : MonoBehaviour, IBoard
 	{
 		[SerializeField] private BoardData _boardData;
@@ -41,6 +42,7 @@ namespace Script.Controllers
 		private readonly List<ChessPiece> _portals = new (2);
 		
 		private readonly Dictionary<int, ChessCell> _cellsDict = new();
+		private AudioSource _audioSource;
 		
 		public event Action<Actor> NextTurnEvent = delegate { };
 
@@ -49,6 +51,7 @@ namespace Script.Controllers
 			if (SceneManager.GetActiveScene().buildIndex != 1) return;
 			
 			_boardCells = new ChessCell[BoardSize, BoardSize];
+			_audioSource = GetComponent<AudioSource>();
 			InitializeBoard();
 			
 			_player = SpawnPlayer();
@@ -80,12 +83,14 @@ namespace Script.Controllers
 		{
 			if (_dragon.CurrentCell.Equals(_player.CurrentCell))
 			{
+				_audioSource.PlayOneShot(_boardData.DragonAtePlayerSound);
 				PlayerIsDefeated();
 				return;
 			}
 			
 			if (_player.CurrentCell.Equals(_treasureChest.CurrentCell))
 			{
+				_audioSource.PlayOneShot(_boardData.WinSound);
 				PlayerWon();
 				return;
 			}
@@ -96,6 +101,7 @@ namespace Script.Controllers
 				                                                || _dragon.CurrentCell.Equals(x.CurrentCell));
 				if (speedBoot)
 				{
+					_audioSource.PlayOneShot(_boardData.SpeedBootsActivationSound);
 					_speedBoots.Remove(speedBoot);
 					Destroy(speedBoot.gameObject);
 					NextTurnEvent.Invoke(actorSide);
@@ -107,12 +113,14 @@ namespace Script.Controllers
 			{
 				if (_bombs.Any(x => _player.CurrentCell.Equals(x.CurrentCell)))
 				{
+					_audioSource.PlayOneShot(_boardData.BombSound);
 					PlayerIsDefeated();
 					return;
 				}
 
 				if (_bombs.Any(x => _dragon.CurrentCell.Equals(x.CurrentCell)))
 				{
+					_audioSource.PlayOneShot(_boardData.BombSound);
 					PlayerWon();
 					return;
 				}
@@ -120,6 +128,7 @@ namespace Script.Controllers
 			
 			if (_portals.Count > 1 && actorSide == Actor.Player && _portals.Any(x => _player.CurrentCell.Equals(x.CurrentCell)))
 			{
+				_audioSource.PlayOneShot(_boardData.PortalSound);
 				var portal = _portals.First(x => !_player.CurrentCell.Equals(x.CurrentCell));
 				_player = SpawnPlayer(portal.CurrentCell);
 			}
