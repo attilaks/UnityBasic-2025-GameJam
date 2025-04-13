@@ -118,11 +118,13 @@ namespace Script.Controllers
 					return;
 				}
 
-				if (_bombs.Any(x => _dragon.CurrentCell.Equals(x.CurrentCell)))
+				var bombUnderDragon = _bombs.FirstOrDefault(x => _dragon.CurrentCell.Equals(x.CurrentCell));
+				if (bombUnderDragon)
 				{
 					_audioSource.PlayOneShot(_boardData.BombSound);
-					PlayerWon();
-					return;
+					_dragon = SpawnDragon();
+					_bombs.Remove(bombUnderDragon);
+					Destroy(bombUnderDragon.gameObject);
 				}
 			}
 			
