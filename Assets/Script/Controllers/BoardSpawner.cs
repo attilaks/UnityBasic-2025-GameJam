@@ -19,14 +19,15 @@ namespace Script.Controllers
 		{
 			if (BoardManager.ChosenBoard)
 			{
+				BoardManager.ChosenBoard.gameObject.SetActive(true);
 				_currentBoard = Instantiate(BoardManager.ChosenBoard, new Vector3(0,0,0), Quaternion.identity, transform);
-				Destroy(BoardManager.ChosenBoard.gameObject);
+				BoardManager.ChosenBoard.gameObject.SetActive(false);
 			}
 			else
 			{
 				_currentBoard = Instantiate(_defaultBoard, new Vector3(0,0,0), Quaternion.identity, transform);
 			}
-
+			
 			_currentBoard.OnEndOfGame += OnEndOfGameHandler;
 		}
 
