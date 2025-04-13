@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Script.Enums;
 using Script.Interfaces;
 using ScriptableObjects;
@@ -34,8 +35,9 @@ namespace Script.Controllers
 		private PlayerController _player;
 		private DragonController _dragon;
 		private ChessPiece _treasureChest;
+		private readonly List<ChessPiece> _speedBoots = new (2);
+		private readonly List<ChessPiece> _bombs = new (2);
 		
-		private readonly ChessPiece[] _speedBoots = new ChessPiece[2];
 		private readonly Dictionary<int, ChessCell> _cellsDict = new();
 		
 		public event Action<Actor> NextTurnEvent = delegate { };
@@ -49,7 +51,7 @@ namespace Script.Controllers
 			
 			_player = SpawnPlayer();
 			_dragon = SpawnDragon();
-			_treasureChest = SpawnerTreasure();
+			_treasureChest = SpawnTreasure();
 			SpawnBombs();
 			SpawnSpeedBoots();
 
@@ -82,6 +84,25 @@ namespace Script.Controllers
 			{
 				PlayerWon();
 				return;
+			}
+
+			if (_speedBoots.Count > 0)
+			{
+				var speedBoot = _speedBoots
+					.FirstOrDefault(x => _player.CurrentCell.Equals(x.CurrentCell) 
+					                     || _dragon.CurrentCell.Equals(x.CurrentCell));
+				if (speedBoot)
+				{
+					_speedBoots.Remove(speedBoot);
+					Destroy(speedBoot.gameObject);
+					NextTurnEvent.Invoke(actorSide);
+					return;
+				}
+			}
+
+			if (_bombs.Count > 0)
+			{
+				
 			}
 			
 			switch (actorSide)
@@ -123,7 +144,7 @@ namespace Script.Controllers
 				}
 			}
 		}
-		
+
 		private PlayerController SpawnPlayer()
 		{
 			var spawnCell = GetCell(PlayerStartRow, Random.Range(0, BoardSize));
@@ -149,7 +170,7 @@ namespace Script.Controllers
 			return null;
 		}
 		
-		private ChessPiece SpawnerTreasure()
+		private ChessPiece SpawnTreasure()
 		{
 			var spawnCell = GetCell(Random.Range(MinTreasureStartRow, MaxTreasureStartRow + 1),
 				Random.Range(MinTreasureStartCol, MaxTreasureStartCol + 1));
@@ -170,7 +191,7 @@ namespace Script.Controllers
 				var spawnCell = GetCell(row, Random.Range(0, BoardSize));
 				if (spawnCell)
 				{
-					Instantiate(_boardData.Bomb, spawnCell.transform);
+					_bombs.Add(Instantiate(_boardData.Bomb, spawnCell.transform));
 				} 
 			}
 		}
@@ -183,7 +204,7 @@ namespace Script.Controllers
 				var spawnCell = GetCell(row, Random.Range(0, BoardSize));
 				if (spawnCell)
 				{
-					_speedBoots[i] = Instantiate(_boardData.SpeedBoot, spawnCell.transform);
+					_speedBoots.Add(Instantiate(_boardData.SpeedBoot, spawnCell.transform));
 				}
 			}
 		}

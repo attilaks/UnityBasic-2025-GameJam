@@ -44,6 +44,8 @@ namespace Script.Controllers
 
 		protected void SetCurrentCell(ChessCell newCell)
 		{
+			if (!newCell) return;
+			
 			CurrentCell = newCell;
 			transform.parent = newCell.transform;
 			_isMoving = true;
