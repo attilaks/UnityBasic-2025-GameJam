@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Script.Enums;
 using Script.Interfaces;
 using ScriptableObjects;
@@ -37,6 +38,7 @@ namespace Script.Controllers
 		private ChessPiece _treasureChest;
 		private readonly List<ChessPiece> _speedBoots = new (2);
 		private readonly List<ChessPiece> _bombs = new (2);
+		private readonly List<ChessPiece> _portals = new (2);
 		
 		private readonly Dictionary<int, ChessCell> _cellsDict = new();
 		
@@ -54,6 +56,7 @@ namespace Script.Controllers
 			_treasureChest = SpawnTreasure();
 			SpawnBombs();
 			SpawnSpeedBoots();
+			SpawnPortals();
 
 			_player.EndOfTurnEvent += HandleEndOfTurn;
 			_dragon.EndOfTurnEvent += HandleEndOfTurn;
@@ -88,9 +91,8 @@ namespace Script.Controllers
 
 			if (_speedBoots.Count > 0)
 			{
-				var speedBoot = _speedBoots
-					.FirstOrDefault(x => _player.CurrentCell.Equals(x.CurrentCell) 
-					                     || _dragon.CurrentCell.Equals(x.CurrentCell));
+				var speedBoot = _speedBoots.FirstOrDefault(x => _player.CurrentCell.Equals(x.CurrentCell) 
+				                                                || _dragon.CurrentCell.Equals(x.CurrentCell));
 				if (speedBoot)
 				{
 					_speedBoots.Remove(speedBoot);
@@ -102,7 +104,23 @@ namespace Script.Controllers
 
 			if (_bombs.Count > 0)
 			{
-				
+				if (_bombs.Any(x => _player.CurrentCell.Equals(x.CurrentCell)))
+				{
+					PlayerIsDefeated();
+					return;
+				}
+
+				if (_bombs.Any(x => _dragon.CurrentCell.Equals(x.CurrentCell)))
+				{
+					PlayerWon();
+					return;
+				}
+			}
+			
+			if (_portals.Count > 1 && actorSide == Actor.Player && _portals.Any(x => _player.CurrentCell.Equals(x.CurrentCell)))
+			{
+				var portal = _portals.First(x => !_player.CurrentCell.Equals(x.CurrentCell));
+				_player = SpawnPlayer(portal.CurrentCell);
 			}
 			
 			switch (actorSide)
@@ -145,29 +163,36 @@ namespace Script.Controllers
 			}
 		}
 
-		private PlayerController SpawnPlayer()
+		private PlayerController SpawnPlayer([CanBeNull] ChessCell cell = null)
 		{
-			var spawnCell = GetCell(PlayerStartRow, Random.Range(0, BoardSize));
-			if (spawnCell)
+			if (_player)
 			{
-				return Instantiate(_boardData.Player, spawnCell.transform);
+				_player.EndOfTurnEvent -= HandleEndOfTurn;
+				Destroy(_player.gameObject);
 			}
 			
-			Debug.LogError("Не удалось найти клетку для спавна игрока!");
-			return null;
-
+			var spawnCell = cell ? cell : GetCell(PlayerStartRow, Random.Range(1, BoardSize - 1));
+			if (spawnCell)
+			{
+				var player = Instantiate(_boardData.Player, spawnCell.transform);
+				// при попадании в портал игрок уничтожается и создается в месте другого портала
+				// поэтому подписка происходит здесь. Криво, но мы спешим
+				player.EndOfTurnEvent += HandleEndOfTurn;
+				return player;
+			}
+			
+			throw new Exception("Не удалось найти клетку для спавна игрока!");
 		}
 
-		private DragonController SpawnDragon()
+		private DragonController SpawnDragon([CanBeNull] ChessCell cell = null)
 		{
-			var spawnCell = GetCell(DragonStartRow, Random.Range(0, BoardSize));
+			var spawnCell = cell ? cell : GetCell(DragonStartRow, Random.Range(1, BoardSize - 1));
 			if (spawnCell)
 			{
 				return Instantiate(_boardData.Dragon, spawnCell.transform);
 			}
 			
-			Debug.LogError("Не удалось найти клетку для спавна дракона!");
-			return null;
+			throw new Exception("Не удалось найти клетку для спавна дракона!");
 		}
 		
 		private ChessPiece SpawnTreasure()
@@ -188,7 +213,7 @@ namespace Script.Controllers
 			for (byte i = 0; i < EachItemCount; ++i)
 			{
 				var row = i % 2 == 0 ? BombsRow : BoardSize - 1 - BombsRow;
-				var spawnCell = GetCell(row, Random.Range(0, BoardSize));
+				var spawnCell = GetCell(row, Random.Range(1, BoardSize - 1));
 				if (spawnCell)
 				{
 					_bombs.Add(Instantiate(_boardData.Bomb, spawnCell.transform));
@@ -201,10 +226,23 @@ namespace Script.Controllers
 			for (var i = 0; i < EachItemCount; i++)
 			{
 				var row = i % 2 == 0 ? SpeedBootsRow : BoardSize - 1 - SpeedBootsRow;
-				var spawnCell = GetCell(row, Random.Range(0, BoardSize));
+				var spawnCell = GetCell(row, Random.Range(1, BoardSize - 1));
 				if (spawnCell)
 				{
 					_speedBoots.Add(Instantiate(_boardData.SpeedBoot, spawnCell.transform));
+				}
+			}
+		}
+
+		private void SpawnPortals()
+		{
+			for (var i = 0; i < EachItemCount; i++)
+			{
+				var column = i % 2 == 0 ? 0 : BoardSize - 1;
+				var spawnCell = GetCell(Random.Range(0, BoardSize), column);
+				if (spawnCell)
+				{
+					_portals.Add(Instantiate(_boardData.Portal, spawnCell.transform));
 				}
 			}
 		}

@@ -17,3 +17,4 @@ MonoBehaviour:
   _treasureChest: {fileID: 2901641673102169733, guid: 07fb2abb547830d46b2653d1eed3ec55, type: 3}
   _bomb: {fileID: 1880339735715781743, guid: 7a3b1ec085f17b247a4b6d0595eed177, type: 3}
   _speedBoot: {fileID: 8349957081040426671, guid: 889e007be3e55ea478d300989bc5bd1e, type: 3}
+  _portal: {fileID: 2901641673102169733, guid: cbb57a6de33577b439c81393cabfde58, type: 3}
