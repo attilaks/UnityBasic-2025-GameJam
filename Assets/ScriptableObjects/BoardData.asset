@@ -17,3 +17,9 @@ MonoBehaviour:
   _treasureChest: {fileID: 2901641673102169733, guid: 07fb2abb547830d46b2653d1eed3ec55, type: 3}
   _bomb: {fileID: 1880339735715781743, guid: 7a3b1ec085f17b247a4b6d0595eed177, type: 3}
   _speedBoot: {fileID: 8349957081040426671, guid: 889e007be3e55ea478d300989bc5bd1e, type: 3}
+  _portal: {fileID: 2901641673102169733, guid: cbb57a6de33577b439c81393cabfde58, type: 3}
+  _winSound: {fileID: 8300000, guid: 7f9ab390ce7841c4d85be12731e50bbe, type: 3}
+  _bombSound: {fileID: 8300000, guid: ef6dee5750ad9424bbc20eb477452cb1, type: 3}
+  _dragonAtePlayerSound: {fileID: 8300000, guid: 30e5647bd53a37d4e94356ad7468da0f, type: 3}
+  _speedBootsActivationSound: {fileID: 8300000, guid: b0a5791999457674faaa0d71f1dcb16f, type: 3}
+  _portalSound: {fileID: 8300000, guid: 99ff8c1ca06d0bc468a2e0e4fc7f6da6, type: 3}

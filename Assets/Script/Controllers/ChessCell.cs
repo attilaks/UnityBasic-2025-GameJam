@@ -8,7 +8,6 @@ namespace Script.Controllers
 		public byte Row { get; private set; }
 		public byte Column { get; private set; }
 		
-		private string ChessNotation =>  $"{(char)('a' + Column)}{8 - Row}";
 		private bool _isInitialized;
     
 		public void SetCoordinates(byte row, byte col)
@@ -22,11 +21,6 @@ namespace Script.Controllers
 			Row = row;
 			Column = col;
 			_isInitialized = true;
-		}
-		
-		private void OnMouseEnter()
-		{
-			Debug.Log($"Клетка {ChessNotation} (ряд {Row}, колонка {Column})");
 		}
 
 		public bool Equals(ChessCell other)

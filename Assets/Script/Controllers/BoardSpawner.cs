@@ -17,16 +17,17 @@ namespace Script.Controllers
 
 		private void Awake()
 		{
-			if (BoardManager.ChosenBoard)
+			if (InterSceneObjects.ChosenBoard)
 			{
-				_currentBoard = Instantiate(BoardManager.ChosenBoard, new Vector3(0,0,0), Quaternion.identity, transform);
-				Destroy(BoardManager.ChosenBoard.gameObject);
+				InterSceneObjects.ChosenBoard.gameObject.SetActive(true);
+				_currentBoard = Instantiate(InterSceneObjects.ChosenBoard, new Vector3(0,0,0), Quaternion.identity, transform);
+				InterSceneObjects.ChosenBoard.gameObject.SetActive(false);
 			}
 			else
 			{
 				_currentBoard = Instantiate(_defaultBoard, new Vector3(0,0,0), Quaternion.identity, transform);
 			}
-
+			
 			_currentBoard.OnEndOfGame += OnEndOfGameHandler;
 		}
 
